@@ -1,1 +1,1 @@
-void packet_decode(char *p); // FDBAQ
+void packet_decode(unsigned char *p); // FDBAQ

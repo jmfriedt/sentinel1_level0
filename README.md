@@ -9,3 +9,13 @@ payload is under investigation (Huffman decoding). Example of raw file analysis
 output and its interpretation:
 
 <img src="figures/res.png">
+
+Page numbers refer to "SAR Space Packet Protocol Data Unit" found in the doc folder.
+
+The reference dataset is descrived in section 5.3 of https://sentinels.copernicus.eu/documents/247904/685163/Sentinel-1-Level-0-Data-Decoding-Package.pdf (Sentinel-1 Level-0 Data Decoding Package). 
+Be aware that the archive is huge (38260338024 bytes).
+
+The same processing algorithm on the reference dataset leads to
+
+<img src="figures/res_ref.png">
+

@@ -110,6 +110,7 @@ int main(int argc, char **argv)
      write(fuser,user,DataLen-62);
      close(fuser);
     }
+  packet_decode(user);
   fcount++;
   printf("\n"); 
  } while (res>0); // until EOF
