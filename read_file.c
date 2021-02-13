@@ -1,7 +1,7 @@
 /*
-./lit ./S1A_IW_RAW__0SDV_20210112T173201_20210112T173234_036108_043B95_7EA4.SAFE/s1a-iw-raw-s-vv-20210112t173201-20210112t173234-036108-043b95.dat
+./read_file S1A_IW_RAW__0SDV_20210112T173201_20210112T173234_036108_043B95_7EA4.SAFE/s1a-iw-raw-s-vv-20210112t173201-20210112t173234-036108-043b95.dat
 
-./lit S1_L0_Decoding_Package/S1A_IW_RAW__0SDV_20200608T101309_20200608T101341_032924_03D05A_A50C.SAFE/s1a-iw-raw-s-vv-20200608t101309-20200608t101341-032924-03d05a.dat
+./read_file S1_L0_Decoding_Package/S1A_IW_RAW__0SDV_20200608T101309_20200608T101341_032924_03D05A_A50C.SAFE/s1a-iw-raw-s-vv-20200608t101309-20200608t101341-032924-03d05a.dat
 
 $ xxd s1a-iw-raw-s-vv-20210112t173201-20210112t173234-036108-043b95.dat | head -5
 00000000: 0c1c fb58 4159 4d28 9fa3 caa0 352e f853  ...XAYM(....5..S
@@ -24,26 +24,28 @@ SAR Space Protocol Data Unit p.14/85
 #include "packet_decode.h"
 
 int main(int argc, char **argv)
-{int f,res;
- u_int16_t c,tmp16;
+{int f,res; // ,k 
+// unsigned short *suser;
+ u_int16_t c,tmp16,NQ;
  u_int32_t tmp32;
  int Secondary;
  int Count,DataLen,PID,PCAT,Sequence;
  char tablo[65536];
  unsigned char *user;
- char filename[256];
- int fuser,fcount;
+ int dataset=0; // IE, IO, QE, QO
+ //int fuser; char filename[256];
+ int fcount;
 
  if (argc<2) return(1);
  f=open(argv[1],O_RDONLY);
  fcount=0;
- do // for (k=0;k<12;k++)
+ do
  {
   // Begin SAR Space Protocol Data Unit p.14/85
   read(f,&c,2);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
   c=htons(c);
-  // On  the  i386  the host byte order is Least Significant Byte first, whereas the network byte
-  //  order, as used on the Internet, is Most Significant Byte first
+  // On the i386 the host byte order is Least Significant Byte first, whereas the network byte
+  // order, as used on the Internet, is Most Significant Byte first
   Secondary=(c>>11)&0x01;
   PID=(c>>4)&0x7f;
   PCAT=(c)&0xf;
@@ -56,7 +58,8 @@ int main(int argc, char **argv)
   
   read(f,&c,2);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
   DataLen=htons(c)+1;
-  printf("%04x: %x(3)\t%d\t%d(61..65533)\n",c,Sequence,Count,DataLen);
+  printf("%04x: %x(3)\tCount=%d\tLen=%d(61..65533)\n",c,Sequence,Count,DataLen);
+  if (((DataLen+6)%4)!=0) printf("\nERROR: Length not multiple of 4\n");
   res=read(f,tablo,DataLen);
   // End SAR Space Protocol Data Unit p.14/85 : we have the payload ... now analyze tablo
  
@@ -71,6 +74,7 @@ int main(int argc, char **argv)
   // Fixed ancillary data service           (14 bytes)
   tmp32=*(u_int32_t*)(tablo+6);tmp32=htonl(tmp32);
   printf("\t%08x(352EF853)",tmp32);        // Sync Marker = begin+12, 352EF853
+  if (tmp32!=0x352EF853) printf("\nERROR: Sync marker != 352EF853");
   tmp32=*(u_int32_t*)(tablo+10);tmp32=htonl(tmp32);
   //printf(" %08x",tmp32);                 // Data Take ID= begin+16 (TBD)
   //printf("\t%hhx",*(u_int8_t*)tablo+14); // ECC Number  = begin+20  ?! /!\ ?!
@@ -81,39 +85,37 @@ int main(int argc, char **argv)
 
   // Sub-commutation ancillary data: PVT/attitude will be accumulated as 42 words along headers
   // p.27: Counter+value                    (3 bytes)
-  printf("\t%hhx",*(u_int8_t*)(tablo+20)); // Word index will increment from 1 to 0x40 to fill
+  printf("\tWordIndex=%hhx",*(u_int8_t*)(tablo+20)); // Word index will increment from 1 to 0x40 to fill
   tmp16=*(u_int16_t*)(tablo+21);tmp16=htons(tmp16);  // the array described in p.23 with ... vvv
-  printf("\t%hx",tmp16);                   // Word value
+  printf("\tWordVal=%hx",tmp16);                   // Word value
 
   // Counter Service                        (8 bytes)
   tmp32=*(u_int32_t*)(tablo+23);tmp32=htonl(tmp32);
-  printf("\t%08x",tmp32);                  // Space packet count
+  printf("\t%08x",tmp32);                  // Space packet count (4 bytes)
   tmp32=*(u_int32_t*)(tablo+27);tmp32=htonl(tmp32);
-  printf(" %08x",tmp32);                  // PRI count
-  printf(" BAQ=%hhx(c)", (*(u_int8_t*)(tablo+31))); // BAQ mode // WHY no shift >> 3 ?! c=FDBAQ mode0 nominal ???
-
+  printf(" %08x",tmp32);                  // PRI count (4 bytes)
+  printf(" BAQ=%02x(c)", (*(u_int8_t*)(tablo+31))); // BAQ mode // WHY no shift >> 3 ?! c=FDBAQ mode0 nominal ???
+                                                    // p.33: 0xc = FDBAQ mode 0
   // p.32: RADAR Configuration Support      (28 bytes) -> total=31+28=59
   // p.52: signal type
-  printf(" T=%hhx(0)",(*(u_int8_t*)(tablo+57))&0x0f);
+  printf(" Typ=%hhx(0)",(*(u_int8_t*)(tablo+57))); // &0x0f);
 
-  // p.54 RADAR Sample Count                (3 bytes)
-  tmp16=*(u_int16_t*)(tablo+59);tmp16=htons(tmp16);  // number of quads NQ => Nsamples=2xNQ
-  printf(" %d",tmp16);
-  // tablo+61 = n/a (p.54)
+  // p.54 RADAR Sample Count                (2 bytes)
+  NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ);  // number of quads NQ => Nsamples=2xNQ
+  printf(" NQ=%d\n",NQ);
+  // tablo+61 = n/a (p.54: index 67)
 
   // p.56 User Data Field -- DataLen-62 ; 4 sections with IE, IO, QE, QO (NOT interleaved)
-  user=(u_int8_t*)(tablo+62); // User Data Field starts @ end of Secondary Header
+  user=(u_int8_t*)(tablo+62);  // User Data Field starts @ end of Secondary Header
   // p.58: format D is nominally used to output radar echo data = Decimation + FDBAQ
-  if (fcount<10)
-    {sprintf(filename,"%d",fcount);
-     fuser=open(filename,O_WRONLY|O_CREAT);
-     write(fuser,user,DataLen-62);
-     close(fuser);
-    }
-  packet_decode(user);
+
+  packet_decode(user,NQ); // NO BYTESWAP SINCE WE WORK BIT BY BIT: Keep bytes in read() order
+//  printf(" >%hhx",*(u_int8_t*)(user)); // start with MSb first !!! the whole documentation
+// was written with LSb on the left but these tables are MSb on the left !!
   fcount++;
   printf("\n"); 
- } while (res>0); // until EOF
+  dataset++; // IE -> IO -> QE -> QO
+ } while ((res>0)&&(dataset<5)); // until EOF
  close(f);
 }
 
