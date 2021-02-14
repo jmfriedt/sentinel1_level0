@@ -31,3 +31,8 @@ which does not seem inconsistent with a noise-like pattern prior to range compre
 the moment the GNU/Octave header must be filled manually (row entry with the result of
 ``grep -v ^# result.dat | wc -l``) since the data processing is exiting at some point when
 meeting an impossible BAQ value.
+
+This result could not have been achieved without the sample code provided at
+https://github.com/plops/cl-cpp-generator2/blob/master/example/08_copernicus_radar/source/
+whose output and probing variable values for invaluable for debugging cases I had not 
+thought of.
