@@ -41,7 +41,7 @@ The same processing algorithm on the reference dataset leads to
 
 Once the file format was assessed, the Huffman compressed data must be uncompressed. 
 Although multiple encoding mode can be used depending on operating conditions of 
-Sentinel1, we focus on FDBAQ/type D which seems to be the operational case. After 
+Sentinel1, we focus on FDBAQ/type D [1] which seems to be the operational case. After 
 processing a dataset (S1A_IW_RAW__0SDV_20210112T173201_20210112T173234_036108_043B95_7EA4.SAFE)
 the following picture is obtained
 
@@ -56,3 +56,6 @@ This result could not have been achieved without the sample code provided at
 https://github.com/plops/cl-cpp-generator2/blob/master/example/08_copernicus_radar/source/
 whose output and probing variable values was invaluable for debugging cases I had not 
 thought of.
+
+[1] E. Attema & al., Sentinel-1 Flexible Dynamic Block Adaptive Quantizer, Proc. 8th European Conference on Synthetic Aperture Radar (EUSAR), July 2010 at 
+https://www.researchgate.net/publication/224233683_Sentinel-1_Flexible_Dynamic_Block_Adaptive_Quantizer
