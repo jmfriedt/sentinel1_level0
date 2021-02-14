@@ -4,6 +4,8 @@
 //00=+0 110=-1
 
 #include <stdio.h>
+#include <stdlib.h>
+#include "reconstruct.h"
 
 struct node {struct noeud* left; struct node* right;};
 
@@ -14,7 +16,7 @@ int next_bit(unsigned char *p,int *cposition,int *bposition)
  return(bit);
 }
 
-void create_BRC4(struct node* root)
+void create_BRC4(struct node* root) // TODO
 {
 }
 
@@ -26,8 +28,8 @@ static int BRC(int BRCn,unsigned char *p,int *cposition,int *bposition)
    case 1: BRCn=4;break; // number of steps to reach the leaves
    case 2: BRCn=6;break; // number of steps to reach the leaves
    case 3: BRCn=9;break; // number of steps to reach the leaves
-   case 4: BRCn=15;printf("\nNOT SUPPORTED\n");break; // number of steps to reach the leaves
-   default: printf("ERROR");return(-1);
+   case 4: BRCn=15;printf("\nNOT SUPPORTED\n");exit(-1);break; // number of steps to reach the leaves
+   default: printf("ERROR");exit(-1);
   }
  sign=next_bit(p,cposition,bposition);
  if (sign==0) sign=1; else sign=-1;
@@ -53,24 +55,107 @@ static int BRC(int BRCn,unsigned char *p,int *cposition,int *bposition)
  return(99);
 }
 
-void packet_decode(unsigned char *p,int NQ) // FDBAQ: section 4.4 p.67
+unsigned char get_THIDX(unsigned char *p,int *cposition,int *bposition)
+{int res=0;
+ int k;
+ for (k=0;k<8;k++)
+   {
+    res=res<<1;
+    res+=next_bit(p,cposition,bposition);
+   }
+ return(res);
+}
+
+int packet_decode(unsigned char *p,int NQ,float *IE, float *IO, float *QE, float *QO) // FDBAQ: section 4.4 p.67
 {// IE 1st 3 bits = BRC
  // QE first 8 bits = THIDX
- unsigned char BRCn;
- int hcode[128];
- int hcode_index,packet_index;
+ int hcodeIE[52378];
+ int hcodeIO[52378];
+ int hcodeQE[52378];
+ int hcodeQO[52378];
+ unsigned char BRCn[410];   // max value p.55: 52378/128=409.2
+ unsigned char THIDXn[410];
+ int BRCindex;
+ int h,hcode_index;
  int cposition=0,bposition=7;
-// TODO: repeat until end of packet ! depends on NQ
-for (packet_index=0;packet_index<NQ;packet_index+=128)
-{//printf("\npos:%d:",bposition);
- BRCn=next_bit(p,&cposition,&bposition)*4;  // MSb=4
- BRCn+=next_bit(p,&cposition,&bposition)*2; // then 2
- BRCn+=next_bit(p,&cposition,&bposition)*1; // then 1 ...
- printf("%d>",BRCn);
- for (hcode_index=0;hcode_index<128;hcode_index++) // p.68: 128 HCodes
-   {hcode[hcode_index]=BRC(BRCn,p,&cposition,&bposition);
-    //printf("%d",hcode[hcode_index]);
-   }
+ int inc=128;  // 128 samples until NQ is reached
+ printf("\nstarting IE\n");
+ BRCindex=0;
+ hcode_index=0;
+ do // repeat until end of packet: depends on NQ
+  {//printf("\npos:%d:",bposition);
+   BRCn[BRCindex]=next_bit(p,&cposition,&bposition)*4;  // MSb=4
+   BRCn[BRCindex]+=next_bit(p,&cposition,&bposition)*2; // then 2
+   BRCn[BRCindex]+=next_bit(p,&cposition,&bposition)*1; // then 1 ...
+   printf("%d>",BRCn[BRCindex]);
+   if ((hcode_index+128)>NQ) inc=(NQ-hcode_index);      // smaller increment to match NQ
+   for (h=0;h<inc;h++) // p.68: 128 HCodes
+     {hcodeIE[hcode_index]=BRC(BRCn[BRCindex],p,&cposition,&bposition); // 128 samples with same BRC
+//      printf("%d",hcodeIE[hcode_index]);
+      hcode_index++;
+     }
+   BRCindex++;
+  }
+ while (hcode_index<NQ);
+ printf("\nIE finished, starting IO @ %d\n",cposition);
+ inc=128;
+ if (bposition!=7) {printf("bposition=%d->7\n",bposition);bposition=7;cposition++;} // start at new position
+ if ((cposition & 1)!=0) {printf("cposition=%d++\n",cposition);cposition++;}        // odd address => +1 
+ BRCindex=0;
+ hcode_index=0;
+ do 
+  {
+   if ((hcode_index+128)>NQ) inc=(NQ-hcode_index);                      // smaller increment to match NQ
+   for (h=0;h<inc;h++) // p.68: 128 HCodes
+     {hcodeIO[hcode_index]=BRC(BRCn[BRCindex],p,&cposition,&bposition); // 128 samples with same BRC
+//      printf("%d",hcodeIO[hcode_index]);
+      hcode_index++;
+     }
+   BRCindex++;
+  }
+ while (hcode_index<NQ);
+ printf("IO finished, starting QE @ %d\n",cposition);
+ inc=128;
+ if (bposition!=7) {printf("bposition=%d\n",bposition);bposition=7;cposition++;} // start at new position
+ if ((cposition & 1)!=0) {printf("cposition=%d++\n",cposition);cposition++;}     // odd address => +1 
+ BRCindex=0;
+ hcode_index=0;
+ do 
+  {THIDXn[BRCindex]=get_THIDX(p,&cposition,&bposition);
+//   THIDXn[BRCindex]=p[cposition]; // 8-bit THIDX
+   printf("#%d",THIDXn[BRCindex]);
+   if ((hcode_index+128)>NQ) inc=(NQ-hcode_index);                      // smaller increment to match NQ
+   for (h=0;h<inc;h++) // p.68: 128 HCodes
+     {hcodeQE[hcode_index]=BRC(BRCn[BRCindex],p,&cposition,&bposition); // 128 samples with same BRC
+//      printf("%d",hcodeQE[hcode_index]);
+      hcode_index++;
+     }
+   BRCindex++;
+  }
+ while (hcode_index<NQ);
+ printf("\nQE finished, starting QO @ %d\n",cposition);
+ inc=128;
+ if (bposition!=7) {printf("bposition=%d\n",bposition);bposition=7;cposition++;} // start at new position
+ if ((cposition & 1)!=0) {printf("cposition=%d++\n",cposition);cposition++;}     // odd address => +1 
+ BRCindex=0;
+ hcode_index=0;
+ do
+  {
+   if ((hcode_index+128)>NQ) inc=(NQ-hcode_index);                      // smaller increment to match NQ
+   for (h=0;h<inc;h++) // p.68: 128 HCodes
+     {hcodeQO[hcode_index]=BRC(BRCn[BRCindex],p,&cposition,&bposition); // 128 samples with same BRC
+//      printf("%d",hcodeQO[hcode_index]);
+      hcode_index++;
+     }
+   BRCindex++;
+  }
+ while (hcode_index<NQ);
+ if (bposition!=7) {printf("bposition=%d->7\n",bposition);bposition=7;cposition++;} // start at new position
+ if ((cposition & 1)!=0) {printf("cposition=%d++\n",cposition);cposition++;}        // odd address => +1 
+ printf("finished at %d",cposition);
+ reconstruction(BRCn,THIDXn,hcodeIE,NQ,IE);
+ reconstruction(BRCn,THIDXn,hcodeIO,NQ,IO);
+ reconstruction(BRCn,THIDXn,hcodeQE,NQ,QE);
+ reconstruction(BRCn,THIDXn,hcodeQO,NQ,QO);
+ return(cposition);
 }
-  // QE first 8 bits = THIDX
-} 

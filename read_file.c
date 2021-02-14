@@ -11,6 +11,8 @@ $ xxd s1a-iw-raw-s-vv-20210112t173201-20210112t173234-036108-043b95.dat | head -
 00000040: 0b2f 1700 321b c65d c8c5 1663 9f51 38b5  ./..2..]...c.Q8.
 
 SAR Space Protocol Data Unit p.14/85
+
+/!\ page 10: bit 0 is the most significant bit !!!
 */
 
 #include <stdio.h>
@@ -26,19 +28,27 @@ SAR Space Protocol Data Unit p.14/85
 int main(int argc, char **argv)
 {int f,res; // ,k 
 // unsigned short *suser;
- u_int16_t c,tmp16,NQ;
+ u_int16_t c,tmp16,NQ=0;
  u_int32_t tmp32;
  int Secondary;
  int Count,DataLen,PID,PCAT,Sequence;
- char tablo[65536];
+ char tablo[65536],BAQ,Typ;
+ int cal_p;
  unsigned char *user;
- int dataset=0; // IE, IO, QE, QO
+ int cposition;
+ float IE[52378]; // results
+ float IO[52378];
+ float QE[52378];
+ float QO[52378];
+ FILE *result;
+ result=fopen("result.dat","w");
+ fprintf(result,"# Created by myself\n# name: x\n# type: complex matrix\n# rows: \n# columns: ");
+
+
  //int fuser; char filename[256];
- int fcount;
 
  if (argc<2) return(1);
  f=open(argv[1],O_RDONLY);
- fcount=0;
  do
  {
   // Begin SAR Space Protocol Data Unit p.14/85
@@ -89,33 +99,40 @@ int main(int argc, char **argv)
   tmp16=*(u_int16_t*)(tablo+21);tmp16=htons(tmp16);  // the array described in p.23 with ... vvv
   printf("\tWordVal=%hx",tmp16);                   // Word value
 
-  // Counter Service                        (8 bytes)
+  // Counter Service                       (8 bytes)
   tmp32=*(u_int32_t*)(tablo+23);tmp32=htonl(tmp32);
   printf("\t%08x",tmp32);                  // Space packet count (4 bytes)
   tmp32=*(u_int32_t*)(tablo+27);tmp32=htonl(tmp32);
-  printf(" %08x",tmp32);                  // PRI count (4 bytes)
-  printf(" BAQ=%02x(c)", (*(u_int8_t*)(tablo+31))); // BAQ mode // WHY no shift >> 3 ?! c=FDBAQ mode0 nominal ???
-                                                    // p.33: 0xc = FDBAQ mode 0
-  // p.32: RADAR Configuration Support      (28 bytes) -> total=31+28=59
-  // p.52: signal type
-  printf(" Typ=%hhx(0)",(*(u_int8_t*)(tablo+57))); // &0x0f);
+  printf(" %08x",tmp32);                   // PRI count (4 bytes)
+  BAQ=(*(u_int8_t*)(tablo+31))&0x1f;       // BAQ mode 0x0c=FDBAQ mode0 nominal p.33: 
+  printf(" BAQ=%02x(c)", (*(u_int8_t*)(tablo+31))); 
+  // p.32: RADAR Configuration Support     (28 bytes) -> total=31+28=59
+  printf(" BlockLen=%hhx(1F)",(*(u_int8_t*)(tablo+32))); 
+  cal_p=(*(u_int8_t*)(tablo+53))&1; 
+  // printf(" cal=%01x(0)", cal_p);        // SSB Data calibration (p.47) 
+  Typ=(*(u_int8_t*)(tablo+57));            // p.52: signal type
+  printf(" Typ=%hhx(0)",Typ); 
 
-  // p.54 RADAR Sample Count                (2 bytes)
-  NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ);  // number of quads NQ => Nsamples=2xNQ
+  // p.54 RADAR Sample Count               (2 bytes)
+  if (NQ==0)
+     {NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ); // number of quads NQ => Nsamples=2xNQ
+      fprintf(result,"%d\n",2*NQ);
+     }
+  else
+     {NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ);}// number of quads NQ => Nsamples=2xNQ
   printf(" NQ=%d\n",NQ);
   // tablo+61 = n/a (p.54: index 67)
 
   // p.56 User Data Field -- DataLen-62 ; 4 sections with IE, IO, QE, QO (NOT interleaved)
   user=(u_int8_t*)(tablo+62);  // User Data Field starts @ end of Secondary Header
   // p.58: format D is nominally used to output radar echo data = Decimation + FDBAQ
-
-  packet_decode(user,NQ); // NO BYTESWAP SINCE WE WORK BIT BY BIT: Keep bytes in read() order
-//  printf(" >%hhx",*(u_int8_t*)(user)); // start with MSb first !!! the whole documentation
-// was written with LSb on the left but these tables are MSb on the left !!
-  fcount++;
-  printf("\n"); 
-  dataset++; // IE -> IO -> QE -> QO
- } while ((res>0)&&(dataset<5)); // until EOF
+  // NO BYTESWAP SINCE WE WORK BIT BY BIT: Keep bytes in read() order
+  if ((BAQ==0x0c)&&(Typ==0)) cposition=packet_decode(user,NQ,IE,IO,QE,QO); 
+  for (cal_p=0;cal_p<NQ;cal_p++) fprintf(result,"(%f,%f) (%f,%f) ",IO[cal_p],QO[cal_p],IE[cal_p],QE[cal_p]);
+  fprintf(result,"\n");fflush(result); // manually fill # rows: entry <- grep -v ^# result.dat | wc -l
+  printf(", finished processing %d\n",DataLen-62); 
+  if ((DataLen-62-cposition)>2) {printf("Not enough data processed\n");exit(-1);}
+ } while ((res>0)); // until EOF
  close(f);
 }
 
