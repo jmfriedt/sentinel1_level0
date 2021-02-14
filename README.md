@@ -4,7 +4,7 @@ Analysis of Sentinel1 level 0 data for decoding raw data, inspired by
 the results shown in "Identification of C-Band Radio Frequency Interferences 
 from Sentinel-1 Data" at https://www.mdpi.com/2072-4292/9/11/1183
 
-<h1>Compilation<h1>
+<h1>Compilation</h1>
   
 Working on a GNU/Linux computer (Debian/sid but only using basic functionalities so any distribution
 should do), type ``make`` to compile (tested using gcc 10.2.1). Execute by providing to ``read_file`` 
