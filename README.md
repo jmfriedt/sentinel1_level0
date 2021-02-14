@@ -19,3 +19,15 @@ The same processing algorithm on the reference dataset leads to
 
 <img src="figures/res_ref.png">
 
+Once the file format was assessed, the Huffman compressed data must be uncompressed. 
+Although multiple encoding mode can be used depending on operating conditions of 
+Sentinel1, we focus on FDBAQ/type D which seems to be the operational case. After 
+processing a dataset (S1A_IW_RAW__0SDV_20210112T173201_20210112T173234_036108_043B95_7EA4.SAFE)
+the following picture is obtained
+
+<img src="figures/raw_result210214.png">
+
+which does not seem inconsistent with a noise-like pattern prior to range compression. At
+the moment the GNU/Octave header must be filled manually (row entry with the result of
+``grep -v ^# result.dat | wc -l``) since the data processing is exiting at some point when
+meeting an impossible BAQ value.
