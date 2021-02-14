@@ -128,7 +128,7 @@ int main(int argc, char **argv)
   // p.58: format D is nominally used to output radar echo data = Decimation + FDBAQ
   // NO BYTESWAP SINCE WE WORK BIT BY BIT: Keep bytes in read() order
   if ((BAQ==0x0c)&&(Typ==0)) cposition=packet_decode(user,NQ,IE,IO,QE,QO); 
-  for (cal_p=0;cal_p<NQ;cal_p++) fprintf(result,"(%f,%f) (%f,%f) ",IO[cal_p],QO[cal_p],IE[cal_p],QE[cal_p]);
+  for (cal_p=0;cal_p<NQ;cal_p++) fprintf(result,"(%f,%f) (%f,%f) ",IE[cal_p],QE[cal_p],IO[cal_p],QO[cal_p]); // p.75: E then O
   fprintf(result,"\n");fflush(result); // manually fill # rows: entry <- grep -v ^# result.dat | wc -l
   printf(", finished processing %d\n",DataLen-62); 
   if ((DataLen-62-cposition)>2) {printf("Not enough data processed\n");exit(-1);}
