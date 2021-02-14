@@ -54,5 +54,5 @@ meeting an impossible BAQ value.
 
 This result could not have been achieved without the sample code provided at
 https://github.com/plops/cl-cpp-generator2/blob/master/example/08_copernicus_radar/source/
-whose output and probing variable values for invaluable for debugging cases I had not 
+whose output and probing variable values was invaluable for debugging cases I had not 
 thought of.
