@@ -1,12 +1,32 @@
 # sentinel1_level0
-
+  
 Analysis of Sentinel1 level 0 data for decoding raw data, inspired by
 the results shown in "Identification of C-Band Radio Frequency Interferences 
 from Sentinel-1 Data" at https://www.mdpi.com/2072-4292/9/11/1183
 
-At the moment the packets of data files are properly decoded and the actual
-payload is under investigation (Huffman decoding). Example of raw file analysis
-output and its interpretation:
+<h1>Compilation<h1>
+  
+Working on a GNU/Linux computer (Debian/sid but only using basic functionalities so any distribution
+should do), type ``make`` to compile (tested using gcc 10.2.1). Execute by providing to ``read_file`` 
+as argument the dataset to be processed, e.g.
+```
+./read_file S1A_IW_RAW__0SDV_20210112T173201_20210112T173234_036108_043B95_7EA4.SAFE/s1a-iw-raw-s-vv-20210112t173201-20210112t173234-036108-043b95.dat   
+```
+The result will be a display of the various decoded fields and a file ``result.dat`` to be 
+processed with GNU/Octave. The number of rows is missing at the moment from the header and
+must be inserted manually as the result of ``grep -v ^# result.dat | wc -l``. In GNU/Octave,
+``load result.dat`` and ``imagesc(abs(x))`` generated the figure displayed at the bottom
+of this page.
+
+<h1>Current status and understanding</h1>
+
+CCSDS is a well documented protocol a bit challenging to get familiar with, as
+was discussed earlier when decoding Meteor M2 weather satellite images
+(https://archive.fosdem.org/2019/schedule/event/sdr_meteorm2n/). Here the error
+correction seems to have already been applied after radiofrequency communication but
+the data is compressed (payload must be Huffman decoded).
+
+Example of raw file analysis output and its interpretation (primary and secondary header):
 
 <img src="figures/res.png">
 
