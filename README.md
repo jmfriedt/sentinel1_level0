@@ -59,3 +59,7 @@ thought of.
 
 [1] E. Attema & al., Sentinel-1 Flexible Dynamic Block Adaptive Quantizer, Proc. 8th European Conference on Synthetic Aperture Radar (EUSAR), July 2010 at 
 https://www.researchgate.net/publication/224233683_Sentinel-1_Flexible_Dynamic_Block_Adaptive_Quantizer
+
+[2] P. Guccione & al., Sentinel-1A: Analysis of FDBAQ Performance on Real Data, IEEE 
+Transactions on Geoscience and Remote Sensing, December 2015, DOI: 10.1109/TGRS.2015.2449288
+
