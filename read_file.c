@@ -13,6 +13,9 @@ $ xxd s1a-iw-raw-s-vv-20210112t173201-20210112t173234-036108-043b95.dat | head -
 SAR Space Protocol Data Unit p.14/85
 
 /!\ page 10: bit 0 is the most significant bit !!!
+
+cat result.dat  | sed 's/[0-9]//g' | sed 's/-//g' | sed 's/\.//g' | sed 's/(//g' | sed 's/)//g'  | sed 's/,/0/g' > TTT
+
 */
 
 #include <stdio.h>
@@ -67,7 +70,7 @@ int main(int argc, char **argv)
   
   read(f,&c,2);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
   DataLen=htons(c)+1;
-  printf("%04x: %x(3)\tCount=%d\tLen=%d(61..65533)\n",c,Sequence,Count,DataLen);
+  printf("%04x: %x(3)\tCount=%02d\tLen=%d(61..65533)\n",c,Sequence,Count,DataLen);
   if (((DataLen+6)%4)!=0) printf("\nERROR: Length not multiple of 4\n");
   res=read(f,tablo,DataLen);
   // End SAR Space Protocol Data Unit p.14/85 : we have the payload ... now analyze tablo
@@ -131,11 +134,13 @@ int main(int argc, char **argv)
   write(fo,user,DataLen-62);
   close(fo);
 #endif
-  if ((BAQ==0x0c)&&(Typ==0)) cposition=packet_decode(user,NQ,IE,IO,QE,QO); 
-  for (cal_p=0;cal_p<NQ;cal_p++) fprintf(result,"(%f,%f) (%f,%f) ",IE[cal_p],QE[cal_p],IO[cal_p],QO[cal_p]); // p.75: E then O
-  fprintf(result,"\n");fflush(result); // manually fill # rows: entry <- grep -v ^# result.dat | wc -l
-  printf(", finished processing %d\n",DataLen-62); 
-  if ((DataLen-62-cposition)>2) {printf("Not enough data processed\n");exit(-1);}
+  if ((BAQ==0x0c)&&(Typ==0))   // TODO: at the moment only keep echo data and skip calibration (p.52: Typ=0xC0 => BAQMOD=0)
+     {cposition=packet_decode(user,NQ,IE,IO,QE,QO); 
+      for (cal_p=0;cal_p<NQ;cal_p++) fprintf(result,"(%f,%f) (%f,%f) ",IE[cal_p],QE[cal_p],IO[cal_p],QO[cal_p]); // p.75: E then O
+      fprintf(result,"\n");fflush(result); // manually fill # rows: entry <- grep -v ^# result.dat | wc -l
+      printf(", finished processing %d\n",DataLen-62); 
+      if ((DataLen-62-cposition)>2) {printf("Not enough data processed: DataLen %d v.s. cposition %d\n",DataLen-62,cposition);exit(-1);}
+     }
  } while ((res>0)); // until EOF
  close(f);
  printf("That's all folks, the end\n");
