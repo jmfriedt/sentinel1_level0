@@ -24,7 +24,15 @@ CCSDS is a well documented protocol a bit challenging to get familiar with, as
 was discussed earlier when decoding Meteor M2 weather satellite images
 (https://archive.fosdem.org/2019/schedule/event/sdr_meteorm2n/). Here the error
 correction seems to have already been applied after radiofrequency communication but
-the data is compressed (payload must be Huffman decoded).
+the data is compressed (payload must be Huffman decoded). 
+
+The most important document is arguably the Sentinel-1 SAR Space Packet Protocol Data 
+Unit found at https://sentinel.esa.int/documents/247904/2142675/Sentinel-1-SAR-Space-Packet-Protocol-Data-Unit.pdf/d47f3009-a37a-43f9-8b65-da858f6fb1ca?t=1547146144000
+
+To make sur you do not miss the awkward bit organization in this document, I highlight below 
+that all charts are wit the most significant bit to the left, indexed 0 (?1!)
+
+<img src="figures/bit_order.png">
 
 Example of raw file analysis output and its interpretation (primary and secondary header):
 
