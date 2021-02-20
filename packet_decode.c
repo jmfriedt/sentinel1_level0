@@ -97,7 +97,7 @@ static int BRC(int BRCn,unsigned char *p,int *cposition,int *bposition)
    case 1: BRCn=4;break; // number of steps to reach the leaves
    case 2: BRCn=6;break; // number of steps to reach the leaves
    case 3: BRCn=9;break; // number of steps to reach the leaves
-   case 4: return(BRC4(p,cposition,bposition));break;
+   case 4: return(BRC4(p,cposition,bposition));printf("\nCheck if BRC4 output is correct\n");exit(0);break;
    default: printf("ERROR");exit(-1);
   }
  sign=next_bit(p,cposition,bposition);
