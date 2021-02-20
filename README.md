@@ -27,10 +27,8 @@ correction seems to have already been applied after radiofrequency communication
 the data is compressed (payload must be Huffman decoded). 
 
 The most important document is arguably the Sentinel-1 SAR Space Packet Protocol Data 
-Unit found at https://sentinel.esa.int/documents/247904/2142675/Sentinel-1-SAR-Space-Packet-Protocol-Data-Unit.pdf/d47f3009-a37a-43f9-8b65-da858f6fb1ca?t=1547146144000
-
-To make sur you do not miss the awkward bit organization in this document, I highlight below 
-that all charts are wit the most significant bit to the left, indexed 0 (?1!)
+Unit found at https://sentinel.esa.int/documents/247904/2142675/Sentinel-1-SAR-Space-Packet-Protocol-Data-Unit.pdf/d47f3009-a37a-43f9-8b65-da858f6fb1ca?t=1547146144000. To make sur you do not miss the awkward bit organization in this document as I did, 
+I highlight below that all charts are drawn with the most significant bit to the left, indexed 0 (?1!)
 
 <img src="figures/bit_order.png">
 
@@ -49,7 +47,7 @@ The same processing algorithm on the reference dataset leads to
 
 Once the file format was assessed, the Huffman compressed data must be uncompressed. 
 Although multiple encoding mode can be used depending on operating conditions of 
-Sentinel1, we focus on FDBAQ/type D [1] which seems to be the operational case. After 
+Sentinel1, we focus on FDBAQ/type D [1,2] which seems to be the operational case. After 
 processing a dataset (S1A_IW_RAW__0SDV_20210112T173201_20210112T173234_036108_043B95_7EA4.SAFE)
 the following picture is obtained
 
