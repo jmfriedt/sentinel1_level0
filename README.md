@@ -27,8 +27,8 @@ correction seems to have already been applied after radiofrequency communication
 the data is compressed (payload must be Huffman decoded). 
 
 The most important document is arguably the Sentinel-1 SAR Space Packet Protocol Data 
-Unit found at https://sentinel.esa.int/documents/247904/2142675/Sentinel-1-SAR-Space-Packet-Protocol-Data-Unit.pdf/d47f3009-a37a-43f9-8b65-da858f6fb1ca?t=1547146144000. To make sur you do not miss the awkward bit organization in this document as I did, 
-I highlight below that all charts are drawn with the most significant bit to the left, indexed 0 (?!)
+Unit found at https://sentinel.esa.int/documents/247904/2142675/Sentinel-1-SAR-Space-Packet-Protocol-Data-Unit.pdf/d47f3009-a37a-43f9-8b65-da858f6fb1ca?t=1547146144000. To make sure you do not miss the awkward bit organization in this document as I did, 
+I highlight below that all charts are drawn with the most significant bit (MSb) to the left, indexed 0 (?!)
 
 <img src="figures/bit_order.png">
 
