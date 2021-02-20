@@ -44,14 +44,10 @@ int main(int argc, char **argv)
 #ifdef dump_payload
  int fo;
 #endif
- result=fopen("result.dat","w");
- fprintf(result,"# Created by myself\n# name: x\n# type: complex matrix\n# rows: \n# columns: ");
-
-
- //int fuser; char filename[256];
-
  if (argc<2) return(1);
  f=open(argv[1],O_RDONLY);
+ result=fopen("result.dat","w");
+ fprintf(result,"# Created by myself\n# name: x\n# type: complex matrix\n# rows: \n# columns: ");
  do
  {
   // Begin SAR Space Protocol Data Unit p.14/85
@@ -142,6 +138,7 @@ int main(int argc, char **argv)
   if ((DataLen-62-cposition)>2) {printf("Not enough data processed\n");exit(-1);}
  } while ((res>0)); // until EOF
  close(f);
+ printf("That's all folks, the end\n");
 }
 
 // Sentinel-1-Level-1-Detailed-Algorithm-Definition.pdf page 27
