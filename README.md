@@ -28,7 +28,7 @@ the data is compressed (payload must be Huffman decoded).
 
 The most important document is arguably the Sentinel-1 SAR Space Packet Protocol Data 
 Unit found at https://sentinel.esa.int/documents/247904/2142675/Sentinel-1-SAR-Space-Packet-Protocol-Data-Unit.pdf/d47f3009-a37a-43f9-8b65-da858f6fb1ca?t=1547146144000. To make sur you do not miss the awkward bit organization in this document as I did, 
-I highlight below that all charts are drawn with the most significant bit to the left, indexed 0 (?1!)
+I highlight below that all charts are drawn with the most significant bit to the left, indexed 0 (?!)
 
 <img src="figures/bit_order.png">
 
@@ -57,6 +57,18 @@ which does not seem inconsistent with a noise-like pattern prior to range compre
 the moment the GNU/Octave header must be filled manually (row entry with the result of
 ``grep -v ^# result.dat | wc -l``) since the data processing is exiting at some point when
 meeting an impossible BAQ value.
+
+Reading the whole file, excluding the calibration packets and focusing solely on 
+echo packets (type 0), we obtain the packet length according to the following chart: 
+
+<img src="figures/result_length.png">
+
+which we interpret as three swaths (IW mode) sequentially acquiring the 7 bursts, with here
+up to five shown. Displaying the data associated with each burst (averaging over two adjacent
+lines vertically and 4 columns vertically to reduce the number of samples displayed in the image)
+hints at some consistent structure
+
+<img src="figures/result_210220.png">
 
 This result could not have been achieved without the sample code provided at
 https://github.com/plops/cl-cpp-generator2/blob/master/example/08_copernicus_radar/source/
