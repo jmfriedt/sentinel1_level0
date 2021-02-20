@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include "reconstruct.h"
 
+//#define dump_payload
+
 struct node {struct noeud* left; struct node* right;};
 
 int next_bit(unsigned char *p,int *cposition,int *bposition)
@@ -37,8 +39,9 @@ static int BRC(int BRCn,unsigned char *p,int *cposition,int *bposition)
  do {
    b=next_bit(p,cposition,bposition);
    if (b==0)   // 0: end of tree
-      if (BRCn==9)
-        {if (hcode==0)
+      if ((BRCn==9) && (hcode==0))
+        {b=next_bit(p,cposition,bposition);
+         if (b==0)
             return((int)(int)sign*(int)hcode);      // we reached 0 -> return
          else
             return((int)(int)sign*(int)(hcode+1));  // we reached 0 -> return
@@ -87,11 +90,16 @@ int packet_decode(unsigned char *p,int NQ,float *IE, float *IO, float *QE, float
    BRCn[BRCindex]=next_bit(p,&cposition,&bposition)*4;  // MSb=4
    BRCn[BRCindex]+=next_bit(p,&cposition,&bposition)*2; // then 2
    BRCn[BRCindex]+=next_bit(p,&cposition,&bposition)*1; // then 1 ...
+#ifdef dump_payload
+   printf("\n");
+#endif
    printf("%d>",BRCn[BRCindex]);
    if ((hcode_index+128)>NQ) inc=(NQ-hcode_index);      // smaller increment to match NQ
    for (h=0;h<inc;h++) // p.68: 128 HCodes
      {hcodeIE[hcode_index]=BRC(BRCn[BRCindex],p,&cposition,&bposition); // 128 samples with same BRC
-//      printf("%d",hcodeIE[hcode_index]);
+#ifdef dump_payload
+      printf("%d",hcodeIE[hcode_index]);
+#endif
       hcode_index++;
      }
    BRCindex++;
