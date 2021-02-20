@@ -24,6 +24,7 @@ SAR Space Protocol Data Unit p.14/85
 #include <arpa/inet.h> // htonl for proper endianness
 
 #include "packet_decode.h"
+//#define dump_payload
 
 int main(int argc, char **argv)
 {int f,res; // ,k 
@@ -33,14 +34,16 @@ int main(int argc, char **argv)
  int Secondary;
  int Count,DataLen,PID,PCAT,Sequence;
  char tablo[65536],BAQ,Typ;
- int cal_p;
+ int cal_p,cposition;
  unsigned char *user;
- int cposition;
  float IE[52378]; // results
  float IO[52378];
  float QE[52378];
  float QO[52378];
  FILE *result;
+#ifdef dump_payload
+ int fo;
+#endif
  result=fopen("result.dat","w");
  fprintf(result,"# Created by myself\n# name: x\n# type: complex matrix\n# rows: \n# columns: ");
 
@@ -127,6 +130,11 @@ int main(int argc, char **argv)
   user=(u_int8_t*)(tablo+62);  // User Data Field starts @ end of Secondary Header
   // p.58: format D is nominally used to output radar echo data = Decimation + FDBAQ
   // NO BYTESWAP SINCE WE WORK BIT BY BIT: Keep bytes in read() order
+#ifdef dump_payload
+  fo=open("/tmp/payload.bin",O_WRONLY|O_CREAT|O_TRUNC,0644); // TRUNC = remove old data
+  write(fo,user,DataLen-62);
+  close(fo);
+#endif
   if ((BAQ==0x0c)&&(Typ==0)) cposition=packet_decode(user,NQ,IE,IO,QE,QO); 
   for (cal_p=0;cal_p<NQ;cal_p++) fprintf(result,"(%f,%f) (%f,%f) ",IE[cal_p],QE[cal_p],IO[cal_p],QO[cal_p]); // p.75: E then O
   fprintf(result,"\n");fflush(result); // manually fill # rows: entry <- grep -v ^# result.dat | wc -l
