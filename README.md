@@ -68,16 +68,23 @@ hints at some consistent structure
 
 The top figure (1st of five) is the same as the image shown above. If the
 comparison is relevant, below is the result of processing the matching Level1 dataset provided
-by ESA with SNAP (swath 2, bursts 1 to 9 despite only 5 being supposedly displayed above).
+by ESA with SNAP (swath IW2 consistent with the decimation code 11 identified for the raw
+datasets displayed above, bursts 1 to 9 despite only 5 being supposedly displayed above).
 
 <img src="figures/snap.png">
 
-
-Following [2], we plot the BRC index which represents the compression efficiency depending on the 
-features of the collected data, with more bits allocated to areas with more structures. Again,
-some spatial consistency is observed:
+Following the idea discussed in [2], we plot the BRC index which represents the compression 
+efficiency depending on the features of the collected data, with more bits allocated to areas 
+with more structures. Again, some spatial consistency is observed:
 
 <img src="figures/brc.png">
+
+Assuming the raw data we collected has been correctly decoded, we wish to consider the 
+chirp shape to synthesize a local copy and cross-correlate each time-series for range
+compression. The sampling rate (code 0x0b in register 40) is fdec=16/11.fref with
+fref=37.53472224 MHz or 54.596 MS/s, the pulse ramp rate is TXPRR=0x8488 or an Up-Chirp at a 
+rate of 1160xfref^2/2^21=779.3 kHz/us starting at TXPSF=0x2932=10546xfref/2^14=24.16 MHz added
+to TXPRR/(4fref)=5190.5 MHz ... which is out of the C-band RADAR of Sentinel1. WORK IN PROGRESS ...
 
 This result could not have been achieved without the sample code provided at
 https://github.com/plops/cl-cpp-generator2/blob/master/example/08_copernicus_radar/source/
@@ -88,5 +95,5 @@ thought of.
 https://www.researchgate.net/publication/224233683_Sentinel-1_Flexible_Dynamic_Block_Adaptive_Quantizer
 
 [2] P. Guccione & al., Sentinel-1A: Analysis of FDBAQ Performance on Real Data, IEEE 
-Transactions on Geoscience and Remote Sensing, December 2015, DOI: 10.1109/TGRS.2015.2449288
-
+Transactions on Geoscience and Remote Sensing, December 2015, DOI: 10.1109/TGRS.2015.2449288 at 
+https://www.researchgate.net/publication/281607948_Sentinel-1A_Analysis_of_FDBAQ_Performance_on_Real_Data
