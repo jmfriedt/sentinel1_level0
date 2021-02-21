@@ -102,14 +102,17 @@ Rate (TXPRR), Tx Pulse Start Frequency (TXPSF) and Tx Pulse Length (TXPL) at off
 hold all the needed information (notice that TXPL is a 24 bit value and it could be that
 my handling of the endianness by going through a 32-bit value handling is not endian agnostic).
 
-Section 4.2.1.1 page 32 of Level 1 Detailed Algorithm Definition at
-https://sentinel.esa.int/documents/247904/1877131/Sentinel-1-Level-1-Detailed-Algorithm-Definition
-provides the chirp equation based on these quantities. 
-
 <img src="figures/replica.png">
 
-The result of the correlation with the
-resulting chirp is shown below, which does look like a proper pulse compression:
+Section 4.2.1.1 page 32 (above) of Level 1 Detailed Algorithm Definition at
+https://sentinel.esa.int/documents/247904/1877131/Sentinel-1-Level-1-Detailed-Algorithm-Definition
+provides the chirp equation based on these quantities. The file we decoded states that for our IW2,
+TXPSF=-10546 and TXPRR=1160 (Upward chirp) and TXPL=2327. Since we also know the sampling
+rate fs=4/11*4*fref (case 11 in Range Decimation, p.35 of Packet Protocol Data Unit) and 
+fref=37.53472224 we can create synthetic time as ``N=TXPL*fs;t=linspace(-TXPL/2,TXPL/2,N);``
+and follow the phase equation provided above to compute the chirp. The result of the 
+correlation with the resulting chirp is shown below, which does look like a proper pulse 
+compression:
 
 <img src="figures/compression.png">
 
