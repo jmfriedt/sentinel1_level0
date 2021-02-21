@@ -110,7 +110,13 @@ provides the chirp equation based on these quantities. The file we decoded state
 TXPSF=-10546 and TXPRR=1160 (Upward chirp) and TXPL=2327. Since we also know the sampling
 rate fs=4/11*4*fref (case 11 in Range Decimation, p.35 of Packet Protocol Data Unit) and 
 fref=37.53472224 we can create synthetic time as ``N=TXPL*fs;t=linspace(-TXPL/2,TXPL/2,N);``
-and follow the phase equation provided above to compute the chirp. The result of the 
+and follow the phase equation provided above to compute the chirp. The evolution of the phase,
+unwrapped phsae and frequency as derivate of the phase is shown below and consistent with a linear
+chirp
+
+<img src="figures/chirp.png">
+
+The result of the 
 correlation with the resulting chirp is shown below, which does look like a proper pulse 
 compression:
 
