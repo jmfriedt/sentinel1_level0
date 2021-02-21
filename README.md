@@ -53,12 +53,7 @@ the following picture is obtained
 
 <img src="figures/raw_result210214.png">
 
-which does not seem inconsistent with a noise-like pattern prior to range compression. If the
-comparison is relevant, below is the result of processing the matching Level1 dataset provided
-by ESA with SNAP (swath 2, bursts 1 to 9 despite only 5 being supposedly displayed above).
-
-<img src="figures/snap.png">
-
+which does not seem inconsistent with a noise-like pattern prior to range compression. 
 Reading the whole file, excluding the calibration packets and focusing solely on 
 echo packets (type 0), we obtain the packet length according to the following chart: 
 
@@ -71,7 +66,12 @@ hints at some consistent structure
 
 <img src="figures/result_210220.png">
 
-The top figure (1st of five) is the same as the image shown above.
+The top figure (1st of five) is the same as the image shown above. If the
+comparison is relevant, below is the result of processing the matching Level1 dataset provided
+by ESA with SNAP (swath 2, bursts 1 to 9 despite only 5 being supposedly displayed above).
+
+<img src="figures/snap.png">
+
 
 Following [2], we plot the BRC index which represents the compression efficiency depending on the 
 features of the collected data, with more bits allocated to areas with more structures. Again,
