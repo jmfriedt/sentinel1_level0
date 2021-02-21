@@ -72,6 +72,12 @@ hints at some consistent structure
 
 The top figure (1st of five) is the same as the image shown above.
 
+Following [2], we plot the BRC index which represents the compression efficiency depending on the 
+features of the collected data, with more bits allocated to areas with more structures. Again,
+some spatial consistency is observed:
+
+<img src="figures/brc.png">
+
 This result could not have been achieved without the sample code provided at
 https://github.com/plops/cl-cpp-generator2/blob/master/example/08_copernicus_radar/source/
 whose output and probing variable values was invaluable for debugging cases I had not 

@@ -36,20 +36,23 @@ int main(int argc, char **argv)
  u_int32_t tmp32;
  int Secondary;
  int Count,DataLen,PID,PCAT,Sequence;
- char tablo[65536],BAQ,Typ;
- int cal_p,cposition;
+ char tablo[65536],BAQ,Typ,Swath;
+ int cal_p,cposition,brcpos;
  unsigned char *user;
  float IE[52378]; // results
  float IO[52378];
  float QE[52378];
  float QO[52378];
+ char brc[52378];
  FILE *result;
+ FILE *brcfile;
 #ifdef dump_payload
  int fo;
 #endif
  if (argc<2) return(1);
  f=open(argv[1],O_RDONLY);
  result=fopen("result.dat","w");
+ brcfile=fopen("brc.dat","w");
  fprintf(result,"# Created by myself\n# name: x\n# type: complex matrix\n# rows: \n# columns: ");
  do
  {
@@ -114,6 +117,8 @@ int main(int argc, char **argv)
   // printf(" cal=%01x(0)", cal_p);        // SSB Data calibration (p.47) 
   Typ=(*(u_int8_t*)(tablo+57));            // p.52: signal type
   printf(" Typ=%hhx(0)",Typ); 
+  Swath=(*(u_int8_t*)(tablo+58));          // p.54: swath number
+  printf(" Swath=%hhx",Swath);
 
   // p.54 RADAR Sample Count               (2 bytes)
   if (NQ==0)
@@ -135,9 +140,12 @@ int main(int argc, char **argv)
   close(fo);
 #endif
   if ((BAQ==0x0c)&&(Typ==0))   // TODO: at the moment only keep echo data and skip calibration (p.52: Typ=0xC0 => BAQMOD=0)
-     {cposition=packet_decode(user,NQ,IE,IO,QE,QO); 
+     {brcpos=0;
+      cposition=packet_decode(user,NQ,IE,IO,QE,QO,brc,&brcpos); 
       for (cal_p=0;cal_p<NQ;cal_p++) fprintf(result,"(%f,%f) (%f,%f) ",IE[cal_p],QE[cal_p],IO[cal_p],QO[cal_p]); // p.75: E then O
+      for (cal_p=0;cal_p<brcpos;cal_p++) fprintf(brcfile,"%d ",brc[cal_p]); 
       fprintf(result,"\n");fflush(result); // manually fill # rows: entry <- grep -v ^# result.dat | wc -l
+      fprintf(brcfile,"\n");fflush(brcfile); 
       printf(", finished processing %d\n",DataLen-62); 
       if ((DataLen-62-cposition)>2) {printf("Not enough data processed: DataLen %d v.s. cposition %d\n",DataLen-62,cposition);exit(-1);}
      }

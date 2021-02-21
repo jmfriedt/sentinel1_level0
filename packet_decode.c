@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include "reconstruct.h"
 
-#define msg printf
-// #define msg 
+//#define msg printf
+#define msg 
 
 //#define dump_payload
 
@@ -136,7 +136,7 @@ unsigned char get_THIDX(unsigned char *p,int *cposition,int *bposition)
  return(res);
 }
 
-int packet_decode(unsigned char *p,int NQ,float *IE, float *IO, float *QE, float *QO) // FDBAQ: section 4.4 p.67
+int packet_decode(unsigned char *p,int NQ,float *IE, float *IO, float *QE, float *QO,char *brc,int *brcpos) // FDBAQ: section 4.4 p.67
 {// IE 1st 3 bits = BRC
  // QE first 8 bits = THIDX
  int hcodeIE[52378];
@@ -161,6 +161,8 @@ int packet_decode(unsigned char *p,int NQ,float *IE, float *IO, float *QE, float
    msg("\n");
 #endif
    msg("%d>",BRCn[BRCindex]);
+   brc[*brcpos]=BRCn[BRCindex];
+   (*brcpos)++;
    if ((hcode_index+128)>NQ) inc=(NQ-hcode_index);      // smaller increment to match NQ
    for (h=0;h<inc;h++) // p.68: 128 HCodes
      {hcodeIE[hcode_index]=BRC(BRCn[BRCindex],p,&cposition,&bposition); // 128 samples with same BRC
