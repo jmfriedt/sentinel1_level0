@@ -53,10 +53,11 @@ the following picture is obtained
 
 <img src="figures/raw_result210214.png">
 
-which does not seem inconsistent with a noise-like pattern prior to range compression. At
-the moment the GNU/Octave header must be filled manually (row entry with the result of
-``grep -v ^# result.dat | wc -l``) since the data processing is exiting at some point when
-meeting an impossible BAQ value.
+which does not seem inconsistent with a noise-like pattern prior to range compression. If the
+comparison is relevant, below is the result of processing the matching Level1 dataset provided
+by ESA with SNAP (swath 2, bursts 1 to 9 despite only 5 being supposedly displayed above).
+
+<img src="figures/snap.png">
 
 Reading the whole file, excluding the calibration packets and focusing solely on 
 echo packets (type 0), we obtain the packet length according to the following chart: 
