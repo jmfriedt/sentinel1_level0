@@ -18,7 +18,7 @@ must be inserted manually as the result of ``grep -v ^# result.dat | wc -l``. In
 ``load result.dat`` and ``imagesc(abs(x))`` generated the figure displayed at the bottom
 of this page.
 
-<h1>Current status and understanding</h1>
+<h1>Current status and understanding on decoding</h1>
 
 CCSDS is a well documented protocol a bit challenging to get familiar with, as
 was discussed earlier when decoding Meteor M2 weather satellite images
@@ -90,6 +90,28 @@ This result could not have been achieved without the sample code provided at
 https://github.com/plops/cl-cpp-generator2/blob/master/example/08_copernicus_radar/source/
 whose output and probing variable values was invaluable for debugging cases I had not 
 thought of.
+
+<h1>Pulse compression</h1>
+
+Assuming we have correctly decoded the {I,Q} stream and are plotting the raw {range,azimuth}
+maps, we might want to consider range and then azimuth compression. Range compression relies on
+generating a local copy of the emitted chirp (whose bandwidth defines the inverse of the
+range resolution) and cross-correlating the received time series with this chirp. The chirp
+parameters are transmitted by Sentinel 1 as part of the messages and the Tx Pulse Sample
+Rate (TXPRR), Tx Pulse Start Frequency (TXPSF) and Tx Pulse Length (TXPL) at offsets 40 to 48
+hold all the needed information (notice that TXPL is a 24 bit value and it could be that
+my handling of the endianness by going through a 32-bit value handling is not endian agnostic).
+
+Section 4.2.1.1 page 32 of Level 1 Detailed Algorithm Definition at
+https://sentinel.esa.int/documents/247904/1877131/Sentinel-1-Level-1-Detailed-Algorithm-Definition
+provides the chirp equation based on these quantities. 
+
+<img src="figures/replica.png">
+
+The result of the correlation with the
+resulting chirp is shown below, which does look like a proper pulse compression:
+
+<img src="figures/compression.png">
 
 [1] E. Attema & al., Sentinel-1 Flexible Dynamic Block Adaptive Quantizer, Proc. 8th European Conference on Synthetic Aperture Radar (EUSAR), July 2010 at 
 https://www.researchgate.net/publication/224233683_Sentinel-1_Flexible_Dynamic_Block_Adaptive_Quantizer
