@@ -107,11 +107,16 @@ my handling of the endianness by going through a 32-bit value handling is not en
 Section 4.2.1.1 page 32 (above) of Level 1 Detailed Algorithm Definition at
 https://sentinel.esa.int/documents/247904/1877131/Sentinel-1-Level-1-Detailed-Algorithm-Definition
 provides the chirp equation based on these quantities. The file we decoded states that for our IW2,
-TXPSF=-10546 and TXPRR=1160 (Upward chirp) and TXPL=2327. Since we also know the sampling
+TXPSF=-10546 and TXPRR=1160 (Upward chirp) and TXPL=2327 and agrees with the analysis of the file
+with https://github.com/plops/cl-cpp-generator2/tree/master/example/33_copernicus_gtk:
+
+<img src="figures/comparison_sentinel.png">
+
+Since we also know the sampling
 rate fs=4/11*4*fref (case 11 in Range Decimation, p.35 of Packet Protocol Data Unit) and 
 fref=37.53472224 we can create synthetic time as ``N=TXPL*fs;t=linspace(-TXPL/2,TXPL/2,N);``
 and follow the phase equation provided above to compute the chirp. The evolution of the phase,
-unwrapped phsae and frequency as derivate of the phase is shown below and consistent with a linear
+unwrapped phase and frequency as derivate of the phase is shown below and consistent with a linear
 chirp
 
 <img src="figures/chirp.png">
