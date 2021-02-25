@@ -24,10 +24,13 @@ cat result.dat  | sed 's/[0-9]//g' | sed 's/-//g' | sed 's/\.//g' | sed 's/(//g'
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <math.h>
 #include <arpa/inet.h> // htonl for proper endianness
 
 #include "packet_decode.h"
 //#define dump_payload
+
+#define fref 37.53472224
 
 int main(int argc, char **argv)
 {int f,res; // ,k 
@@ -112,9 +115,20 @@ int main(int argc, char **argv)
   BAQ=(*(u_int8_t*)(tablo+31))&0x1f;       // BAQ mode 0x0c=FDBAQ mode0 nominal p.33: 
   printf(" BAQ=%02x(c)", (*(u_int8_t*)(tablo+31))); 
   // p.32: RADAR Configuration Support     (28 bytes) -> total=31+28=59
-  printf(" BlockLen=%hhx(1F)",(*(u_int8_t*)(tablo+32))); 
-  cal_p=(*(u_int8_t*)(tablo+53))&1; 
-  // printf(" cal=%01x(0)", cal_p);        // SSB Data calibration (p.47) 
+  printf(" BlockLen=%hhx(1F)\n",(*(u_int8_t*)(tablo+32))); 
+ 
+  printf("\tDecim=%hhx",*(u_int8_t*)(tablo+34));     // RGDEC
+  tmp16=*(u_int16_t*)(tablo+36);tmp16=htons(tmp16);  // Tx Pulse Ramp Rate
+  if ((tmp16&0x8000)==0) printf("\tTXPRR=v%x=",tmp16);else printf("\tTXPRR=^%x=",tmp16);
+  printf("%d",tmp16&0x7fff); 
+  tmp16=*(u_int16_t*)(tablo+38);tmp16=htons(tmp16);  // Tx Pulse Start Freq
+  if ((tmp16&0x8000)==0) printf("\tTXPSF=-0x%x",tmp16);else printf("\tTXPSF=+0x%x",tmp16); // 0 negative, 1 positive ?!
+  printf("=%d ",tmp16&0x7fff);              // Word value
+  tmp32=*(u_int32_t*)(tablo+40);tmp32=htonl(tmp32)>>8; // keep last 24 bits
+  printf("TXPL=%08x=%d",tmp32,tmp32);      // PRI count (4 bytes)
+  
+  cal_p=((*(u_int8_t*)(tablo+53))>>4)&0x07;
+  printf(" Polar=%x", cal_p);        // SSB Data calibration (p.47) 
   Typ=(*(u_int8_t*)(tablo+57));            // p.52: signal type
   printf(" Typ=%hhx(0)",Typ); 
   Swath=(*(u_int8_t*)(tablo+58));          // p.54: swath number
