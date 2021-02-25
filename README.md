@@ -135,7 +135,7 @@ in Brazil with the files found at S1B_IW_RAW__0SDV_20210216T083028_20210216T0831
 S1B_IW_SLC__1SDV_20210216T083030_20210216T083058_025629_030DEF_68C4.zip
 (level 1 data)
 
-Downloading the Level1 preview image
+Downloading the Level1 preview image S1B_IW_SLC__1SDV_20210216T083030_20210216T083058_025629_030DEF_68C4-ql.jpeg from the ESA web site
 
 <img src="saopaolo/S1B_IW_SLC__1SDV_20210216T083030_20210216T083058_025629_030DEF_68C4-ql.jpeg">
 
