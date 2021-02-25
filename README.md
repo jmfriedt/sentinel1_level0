@@ -127,6 +127,38 @@ compression:
 
 <img src="figures/compression.png">
 
+<h1>Point-like target: the Sao Paolo dataset</h1>
+
+Consensus seems to be that range/azimuth compression is best assessed on point like targets
+over flat surfaces, namely ships at sea. The dataset we consider is the port of Sao Paolo
+in Brazil with the files found at S1B_IW_RAW__0SDV_20210216T083028_20210216T083100_025629_030DEF_1684.zip (raw level 0 data) and 
+S1B_IW_SLC__1SDV_20210216T083030_20210216T083058_025629_030DEF_68C4.zip
+(level 1 data)
+
+Downloading the Level1 preview image
+
+<img src="saopaolo/S1B_IW_SLC__1SDV_20210216T083030_20210216T083058_025629_030DEF_68C4-ql.jpeg">
+
+clearly shows the waiting ships. Processing this dataset for compression rate (BRC) again
+demonstrates that we probably understand the encoding procedure
+
+<img src="saopaolo/saopaolo_brc.png">
+
+and
+
+<img src="saopaolo/saopaolo_mod.png">
+
+prior to compression, but most interesting is analyzing a line after range compression 
+(applying the chirp
+equation from the decoded parameters) here displaying the phase of the complex coefficient
+as a function of azimuth position
+
+<img src="saopaolo/phase.png">
+
+My current understanding is that this phase should be linear and something should be done to 
+remove this parabolic dependency of the phase with position before the FFT can compress
+the signal along the azimuth.
+
 [1] E. Attema & al., Sentinel-1 Flexible Dynamic Block Adaptive Quantizer, Proc. 8th European Conference on Synthetic Aperture Radar (EUSAR), July 2010 at 
 https://www.researchgate.net/publication/224233683_Sentinel-1_Flexible_Dynamic_Block_Adaptive_Quantizer
 
