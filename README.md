@@ -84,12 +84,9 @@ chirp shape to synthesize a local copy and cross-correlate each time-series for 
 compression. The sampling rate (code 0x0b in register 40) is fdec=16/11.fref with
 fref=37.53472224 MHz or 54.596 MS/s, the pulse ramp rate is TXPRR=0x8488 or an Up-Chirp at a 
 rate of 1160xfref^2/2^21=779.3 kHz/us starting at TXPSF=0x2932=10546xfref/2^14=24.16 MHz added
-to TXPRR/(4fref)=5190.5 MHz ... which is out of the C-band RADAR of Sentinel1. WORK IN PROGRESS ...
-
-This result could not have been achieved without the sample code provided at
-https://github.com/plops/cl-cpp-generator2/blob/master/example/08_copernicus_radar/source/
-whose output and probing variable values was invaluable for debugging cases I had not 
-thought of.
+to TXPRR/(4fref)=5190.5 MHz ... which is out of the C-band RADAR of Sentinel1. Not sure what
+to conclude from this frequency value, other than continuing processing under the assumption
+that the analysis is so far correct.
 
 <h1>Pulse compression</h1>
 
@@ -162,6 +159,11 @@ as a function of azimuth position
 My current understanding is that this phase should be linear and something should be done to 
 remove this parabolic dependency of the phase with position before the FFT can compress
 the signal along the azimuth.
+
+This result could not have been achieved without the sample code provided at
+https://github.com/plops/cl-cpp-generator2/blob/master/example/08_copernicus_radar/source/
+whose output and probing variable values was invaluable for debugging cases I had not 
+thought of.
 
 [1] E. Attema & al., Sentinel-1 Flexible Dynamic Block Adaptive Quantizer, Proc. 8th European Conference on Synthetic Aperture Radar (EUSAR), July 2010 at 
 https://www.researchgate.net/publication/224233683_Sentinel-1_Flexible_Dynamic_Block_Adaptive_Quantizer
