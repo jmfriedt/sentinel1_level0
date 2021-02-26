@@ -113,7 +113,7 @@ with https://github.com/plops/cl-cpp-generator2/tree/master/example/33_copernicu
 <img src="figures/comparison_sentinel.png">
 
 Since we also know the sampling
-rate fs=4/11*4*fref (case 11 in Range Decimation, p.35 of Packet Protocol Data Unit) and 
+rate fs=4/11x4xfref (case 11 in Range Decimation, p.35 of Packet Protocol Data Unit) and 
 fref=37.53472224 we can create synthetic time as ``N=TXPL*fs;t=linspace(-TXPL/2,TXPL/2,N);``
 and follow the phase equation provided above to compute the chirp. The evolution of the phase,
 unwrapped phase and frequency as derivate of the phase is shown below and consistent with a linear
@@ -133,14 +133,18 @@ Consensus seems to be that range/azimuth compression is best assessed on point l
 over flat surfaces, namely ships at sea. The dataset we consider is the port of Sao Paolo
 in Brazil with the files found at S1B_IW_RAW__0SDV_20210216T083028_20210216T083100_025629_030DEF_1684.zip (raw level 0 data) and 
 S1B_IW_SLC__1SDV_20210216T083030_20210216T083058_025629_030DEF_68C4.zip
-(level 1 data)
+(level 1 data).
 
 Downloading the Level1 preview image S1B_IW_SLC__1SDV_20210216T083030_20210216T083058_025629_030DEF_68C4-ql.jpeg from the ESA web site
 
 <img src="saopaolo/S1B_IW_SLC__1SDV_20210216T083030_20210216T083058_025629_030DEF_68C4-ql.jpeg">
 
-clearly shows the waiting ships. Processing this dataset for compression rate (BRC) again
-demonstrates that we probably understand the encoding procedure
+clearly shows the waiting ships best visible on the middle swath identified as IW2 which we shall
+focus on, and the individual ships waiting at sea are visible in the SNAP display of the Level1 dataset:
+
+<img src="saopaolo/level1.png">
+
+Processing this dataset for compression rate (BRC) again demonstrates that we probably understand the encoding procedure
 
 <img src="saopaolo/saopaolo_brc.png">
 
