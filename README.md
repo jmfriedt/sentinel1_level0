@@ -170,28 +170,28 @@ in the name of the dataset we fetched from Copernicus Scihub ``S1A_S6_RAW__0SDV_
 Since this dataset was mostly collected over sea the BRC map is not very exciting with relevant
 features
 
-<a img src="brc_sm.png">
+<img src="brc_sm.png">
 
 and prior to any compression the image is rather blurred as expected from the pulse spreading along
 range and azimuth data
 
-<a img src="saopaolo_SM_pre.png">
+<img src="saopaolo_SM_pre.png">
 
 Range compression is readily achieved with the chirp shape published along the Sentinel1 
 sentences defining start frequency, chirp duration and direction:
 
-<a img src="saopaolo_SM_range.png">
+<img src="saopaolo_SM_range.png">
 
 and yet range compression remains elusive. Here we have sampled the chirp *along the azimuth* direction of the most powerful reflector, assumed being point-like, and have correlated the whole image with
 this chirp shape. Why the pulse is a chirp along azimuth and not a linear phase evolution remains
 an open question to this investigator
 
-<a img src="compression1.png">
+<img src="compression1.png">
 
 Applying the azimuth compression over the whole harbour seems to compress all ships to single pixel
 reflectors:
 
-<a img src="compression3.png">
+<img src="compression3.png">
 
 <h1>Acknowledgement</h1>
 
