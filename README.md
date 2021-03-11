@@ -193,6 +193,15 @@ reflectors:
 
 <img src="saopaolo_SM/compression3.png">
 
+Processing the huge datasets in a single step is beyond the capability of the author's CF-19 laptop computer fitted with
+12 GB RAM. The software was updated to save multiple binary files indexed with the Swath number and acquisition (GPS) time 
+(in second). The result, with comparison with the SNAP software output of a StripMap (SM6) dataset of Sao Paolo harbour,
+is exhibited below
+
+<img src="figures/saopaolo_SM_level0.png">
+
+<img src="figures/saopaolo_SM_snap.png">
+
 <h1>Acknowledgement</h1>
 
 This result could not have been achieved without the sample code provided at

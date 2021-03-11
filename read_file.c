@@ -1,4 +1,6 @@
 /*
+./read_file ./saopaolo_SM/S1A_S6_RAW__0SDV_20210226T214354_20210226T214424_036766_045287_FD68.SAFE/s1a-s6-raw-s-vv-20210226t214354-20210226t214424-036766-045287.dat
+
 ./read_file S1A_IW_RAW__0SDV_20210112T173201_20210112T173234_036108_043B95_7EA4.SAFE/s1a-iw-raw-s-vv-20210112t173201-20210112t173234-036108-043b95.dat
 
 ./read_file S1_L0_Decoding_Package/S1A_IW_RAW__0SDV_20200608T101309_20200608T101341_032924_03D05A_A50C.SAFE/s1a-iw-raw-s-vv-20200608t101309-20200608t101341-032924-03d05a.dat
@@ -36,7 +38,7 @@ int main(int argc, char **argv)
 {int f,res; // ,k 
 // unsigned short *suser;
  u_int16_t c,tmp16,NQ=0;
- u_int32_t tmp32;
+ u_int32_t tmp32,Time;
  int Secondary;
  int Count,DataLen,PID,PCAT,Sequence;
  char tablo[65536],BAQ,Typ,Swath;
@@ -47,16 +49,21 @@ int main(int argc, char **argv)
  float QE[52378];
  float QO[52378];
  char brc[52378];
- FILE *result;
- FILE *brcfile;
+ // FILE *result;
+ // FILE *brcfile;
+ int brcfile;
+ int result;
+ int numline=0;
+ int file_swath_number=0; // for new file creation
+ char filename[255];
 #ifdef dump_payload
  int fo;
 #endif
  if (argc<2) return(1);
  f=open(argv[1],O_RDONLY);
- result=fopen("result.dat","w");
- brcfile=fopen("brc.dat","w");
- fprintf(result,"# Created by myself\n# name: x\n# type: complex matrix\n# rows: \n# columns: ");
+ // result=fopen("result.dat","w");
+ // brcfile=fopen("brc.dat","w");
+ // fprintf(result,"# Created by myself\n# name: x\n# type: complex matrix\n# rows: \n# columns: ");
  do
  {
   // Begin SAR Space Protocol Data Unit p.14/85
@@ -85,8 +92,8 @@ int main(int argc, char **argv)
   // https://www.andrews.edu/~tzs/timeconv/timedisplay.php
   // Time Conversion Results Jan 12, 2021 17:32:01 UTC  =  GPS Time 1294507939
   // coarse and fine time field             (6 bytes)
-  tmp32=*(u_int32_t*)tablo;tmp32=htonl(tmp32);
-  printf("\tTime: %d",tmp32);              // Coarse Time = begin+6 1294507939
+  tmp32=*(u_int32_t*)tablo;Time=htonl(tmp32);
+  printf("\tTime: %d",Time);               // Coarse Time = begin+6 1294507939
   tmp16=*(u_int16_t*)(tablo+4);tmp16=htons(tmp16);
   printf(":%d",tmp16);                     // Fine Time   = begin+10, *2^(-16) s
   // Fixed ancillary data service           (14 bytes)
@@ -123,9 +130,11 @@ int main(int argc, char **argv)
   printf("%d",tmp16&0x7fff); 
   tmp16=*(u_int16_t*)(tablo+38);tmp16=htons(tmp16);  // Tx Pulse Start Freq
   if ((tmp16&0x8000)==0) printf("\tTXPSF=-0x%x",tmp16);else printf("\tTXPSF=+0x%x",tmp16); // 0 negative, 1 positive ?!
-  printf("=%d ",tmp16&0x7fff);              // Word value
+  printf("=%d ",tmp16&0x7fff);             // Word value
   tmp32=*(u_int32_t*)(tablo+40);tmp32=htonl(tmp32)>>8; // keep last 24 bits
-  printf("TXPL=%08x=%d",tmp32,tmp32);      // PRI count (4 bytes)
+  printf("TXPL=%08x=%d ",tmp32,tmp32);     // TX Pulse length (3 bytes)
+  tmp32=*(u_int32_t*)(tablo+44);tmp32=htonl(tmp32)>>8; // keep last 24 bits
+  printf("PRI=%08x=%d",tmp32,tmp32);       // PRI, needed for Doppler centroid analysis (3 bytes)
   
   cal_p=((*(u_int8_t*)(tablo+53))>>4)&0x07;
   printf(" Polar=%x", cal_p);        // SSB Data calibration (p.47) 
@@ -134,14 +143,20 @@ int main(int argc, char **argv)
   Swath=(*(u_int8_t*)(tablo+58));          // p.54: swath number
   printf(" Swath=%hhx",Swath);
 
+ if (Swath!=file_swath_number)
+   {if (file_swath_number!=0)
+       {close(result);close(brcfile);printf("\nFILE written %d %d\n",2*NQ,numline);numline=0;}
+    file_swath_number=Swath;
+    sprintf(filename,"result%02d_%d.bin",Swath,Time);
+    result=open(filename,O_WRONLY|O_CREAT|O_TRUNC,0644); // TRUNC = remove old data
+    sprintf(filename,"brc%02d_%d.bin",Swath,Time);
+    brcfile=open(filename,O_WRONLY|O_CREAT|O_TRUNC,0644);
+   }
+
   // p.54 RADAR Sample Count               (2 bytes)
-  if (NQ==0)
-     {NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ); // number of quads NQ => Nsamples=2xNQ
-      fprintf(result,"%d\n",2*NQ);
-     }
-  else
-     {NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ);}// number of quads NQ => Nsamples=2xNQ
+  NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ); // number of quads NQ => Nsamples=2xNQ
   printf(" NQ=%d\n",NQ);
+  // if (NQ==0) fprintf(result,"%d\n",2*NQ);
   // tablo+61 = n/a (p.54: index 67)
 
   // p.56 User Data Field -- DataLen-62 ; 4 sections with IE, IO, QE, QO (NOT interleaved)
@@ -153,19 +168,30 @@ int main(int argc, char **argv)
   write(fo,user,DataLen-62);
   close(fo);
 #endif
+
   if ((BAQ==0x0c)&&(Typ==0))   // TODO: at the moment only keep echo data and skip calibration (p.52: Typ=0xC0 => BAQMOD=0)
      {brcpos=0;
       cposition=packet_decode(user,NQ,IE,IO,QE,QO,brc,&brcpos); 
-      for (cal_p=0;cal_p<NQ;cal_p++) fprintf(result,"(%f,%f) (%f,%f) ",IE[cal_p],QE[cal_p],IO[cal_p],QO[cal_p]); // p.75: E then O
-      for (cal_p=0;cal_p<brcpos;cal_p++) fprintf(brcfile,"%d ",brc[cal_p]); 
-      fprintf(result,"\n");fflush(result); // manually fill # rows: entry <- grep -v ^# result.dat | wc -l
-      fprintf(brcfile,"\n");fflush(brcfile); 
+      for (cal_p=0;cal_p<NQ;cal_p++) 
+         {write(result,&IE[cal_p],sizeof(float));
+          write(result,&QE[cal_p],sizeof(float));
+          write(result,&IO[cal_p],sizeof(float));
+          write(result,&QO[cal_p],sizeof(float));
+         }
+   // fprintf(result,"(%f,%f) (%f,%f) ",IE[cal_p],QE[cal_p],IO[cal_p],QO[cal_p]); // p.75: E then O
+      for (cal_p=0;cal_p<brcpos;cal_p++) write(brcfile,&brc[cal_p],1);
+                                      // fprintf(brcfile,"%d ",brc[cal_p]); 
+      // fprintf(result,"\n");fflush(result); // manually fill # rows: entry <- grep -v ^# result.dat | wc -l
+      // fprintf(brcfile,"\n");fflush(brcfile); 
       printf(", finished processing %d\n",DataLen-62); 
       if ((DataLen-62-cposition)>2) {printf("Not enough data processed: DataLen %d v.s. cposition %d\n",DataLen-62,cposition);exit(-1);}
      }
+  numline++;
  } while ((res>0)); // until EOF
  close(f);
- printf("That's all folks, the end\n");
+ close(brcfile);
+ close(result);
+ printf("That's all folks, the end: %dx%d samples written\n",2*NQ,numline);
 }
 
 // Sentinel-1-Level-1-Detailed-Algorithm-Definition.pdf page 27
