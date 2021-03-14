@@ -12,11 +12,13 @@ as argument the dataset to be processed, e.g.
 ```
 ./read_file S1A_IW_RAW__0SDV_20210112T173201_20210112T173234_036108_043B95_7EA4.SAFE/s1a-iw-raw-s-vv-20210112t173201-20210112t173234-036108-043b95.dat   
 ```
-The result will be a display of the various decoded fields and a file ``result.dat`` to be 
-processed with GNU/Octave. The number of rows is missing at the moment from the header and
-must be inserted manually as the result of ``grep -v ^# result.dat | wc -l``. In GNU/Octave,
-``load result.dat`` and ``imagesc(abs(x))`` generated the figure displayed at the bottom
-of this page.
+The result will be a display of the various decoded fields and binary files ``result*.bin`` with
+``*`` including the swath index and coarse GPS time to separate all contributions. These files
+are to be processed using GNU/Octave by running the ``read_bin.m`` script. At the moment this script
+will take as options the filename, NQ the number of data to be processed (range direction) and the number
+of lines to be processed (azimuth direction). The number of samples in the range direction is twice the NQ field
+when decoding. Please help find an easier way to process the generated dataset, especially in the case of multiple
+swaths to be assembled (IW datasets).
 
 <h1>Current status and understanding on decoding</h1>
 
