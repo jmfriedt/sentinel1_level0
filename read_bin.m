@@ -65,4 +65,4 @@ else
   end
 end
 clear sol
-imagesc(fliplr(flipud(abs(ssol(1:3:end,1:3:end)))),[1 1e8])
+imagesc(fliplr(flipud(abs(ssol(1:3:end,1:3:end)))),[1 2e8])

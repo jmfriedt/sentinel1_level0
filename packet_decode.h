@@ -1,1 +1,1 @@
-int packet_decode(unsigned char *p,int NQ,float*,float*,float*,float*,char*,int*); // FDBAQ
+int packet_decode(unsigned char *,int,float*,float*,float*,float*,char*,int*); // FDBAQ

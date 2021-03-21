@@ -204,6 +204,22 @@ is exhibited below
 
 <img src="figures/saopaolo_SM_snap.png">
 
+<h1>Calibration packets</h1>
+
+The whole purpose of this investigation was accessing the Level 0 raw packets to decode
+signals as Sentinel1 is listening only. We could probably have started with that, but now that
+FDBAQ is decoded correctly, decoding the Data Format A (Bypass) is quite trivial as long
+as we do not mess up with filler bits. As mentioned in the documentation, NW the number of words
+used to process calibration data is fixed so we can actually just increment the pointer whenever
+the NQ complex data have been read. We have decided the read bytes 5 by 5 since 5x8=40 which
+is aligned with the 10-bit long data format. The resulting .bin files can be read using the 
+GNU/Octave ``read_bin_cal.m`` providing as argument the NQ number of samples/line (remember to
+double the value stored in the filename as Even and Odd samples are read sequentially, meaning
+twice as many samples as indicated) and the number of lines. An example of resulting chart is 
+provided below, emphasizing the consistency and reproducibility of the results.
+
+<img src="calibration_S6.png">
+
 <h1>Acknowledgement</h1>
 
 This result could not have been achieved without the sample code provided at

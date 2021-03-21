@@ -30,6 +30,7 @@ cat result.dat  | sed 's/[0-9]//g' | sed 's/-//g' | sed 's/\.//g' | sed 's/(//g'
 #include <arpa/inet.h> // htonl for proper endianness
 
 #include "packet_decode.h"
+#include "bypass.h"
 //#define dump_payload
 
 #define fref 37.53472224
@@ -41,7 +42,7 @@ int main(int argc, char **argv)
  u_int32_t tmp32,Time;
  int Secondary;
  int Count,DataLen,PID,PCAT,Sequence;
- char tablo[65536],BAQ,Typ,Swath;
+ unsigned char tablo[65536],BAQ,Swath,Typ;
  int cal_p,cposition,brcpos;
  unsigned char *user;
  float IE[52378]; // results
@@ -137,8 +138,8 @@ int main(int argc, char **argv)
   printf("PRI=%08x=%d",tmp32,tmp32);       // PRI, needed for Doppler centroid analysis (3 bytes)
   
   cal_p=((*(u_int8_t*)(tablo+53))>>4)&0x07;
-  printf(" Polar=%x", cal_p);        // SSB Data calibration (p.47) 
-  Typ=(*(u_int8_t*)(tablo+57));            // p.52: signal type
+  printf(" Polar=%x", cal_p);              // SSB Data calibration (p.47) 
+  Typ=(*(u_int8_t*)(tablo+57));Typ=Typ>>4; // p.52: signal type
   printf(" Typ=%hhx(0)",Typ); 
   Swath=(*(u_int8_t*)(tablo+58));          // p.54: swath number
   printf(" Swath=%hhx",Swath);
@@ -147,14 +148,16 @@ int main(int argc, char **argv)
    {if (file_swath_number!=0)
        {close(result);close(brcfile);printf("\nFILE written %d %d\n",2*NQ,numline);numline=0;}
     file_swath_number=Swath;
-    sprintf(filename,"result%02d_%d.bin",Swath,Time);
+    NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ); // number of quads NQ => Nsamples=2xNQ
+    sprintf(filename,"resultSW%02d_T%d_NQ%d.bin",Swath,Time,NQ);
     result=open(filename,O_WRONLY|O_CREAT|O_TRUNC,0644); // TRUNC = remove old data
-    sprintf(filename,"brc%02d_%d.bin",Swath,Time);
+    sprintf(filename,"brcSW%02d_T%d.bin",Swath,Time);
     brcfile=open(filename,O_WRONLY|O_CREAT|O_TRUNC,0644);
    }
-
-  // p.54 RADAR Sample Count               (2 bytes)
-  NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ); // number of quads NQ => Nsamples=2xNQ
+  else 
+   {// p.54 RADAR Sample Count               (2 bytes)
+    NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ); // number of quads NQ => Nsamples=2xNQ
+   }
   printf(" NQ=%d\n",NQ);
   // if (NQ==0) fprintf(result,"%d\n",2*NQ);
   // tablo+61 = n/a (p.54: index 67)
@@ -169,7 +172,18 @@ int main(int argc, char **argv)
   close(fo);
 #endif
 
-  if ((BAQ==0x0c)&&(Typ==0))   // TODO: at the moment only keep echo data and skip calibration (p.52: Typ=0xC0 => BAQMOD=0)
+  if ((BAQ==0x00)&&(Typ>7))    // calibration (p.52: Typ>7 for cal, and p.33: BAQMOD=0=BYPASS for cal)
+     {cposition=bypass(user,NQ,IE,IO,QE,QO); 
+      for (cal_p=0;cal_p<NQ;cal_p++) 
+         {write(result,&IE[cal_p],sizeof(float));
+          write(result,&QE[cal_p],sizeof(float));
+          write(result,&IO[cal_p],sizeof(float));
+          write(result,&QO[cal_p],sizeof(float));
+         }
+      printf(", finished processing %d calibration\n",DataLen-62); 
+      if ((DataLen-62-cposition)>2) {printf("Not enough data processed: DataLen %d v.s. cposition %d\n",DataLen-62,cposition);exit(-1);}
+     }
+  if ((BAQ==0x0c)&&(Typ==0))   // echo data (p.52: Typ=0 for echo data and p.33 BAQ Mode=0x0C => nominal FDBAQ p.67)
      {brcpos=0;
       cposition=packet_decode(user,NQ,IE,IO,QE,QO,brc,&brcpos); 
       for (cal_p=0;cal_p<NQ;cal_p++) 
@@ -183,7 +197,7 @@ int main(int argc, char **argv)
                                       // fprintf(brcfile,"%d ",brc[cal_p]); 
       // fprintf(result,"\n");fflush(result); // manually fill # rows: entry <- grep -v ^# result.dat | wc -l
       // fprintf(brcfile,"\n");fflush(brcfile); 
-      printf(", finished processing %d\n",DataLen-62); 
+      printf(", finished processing %d echo\n",DataLen-62); 
       if ((DataLen-62-cposition)>2) {printf("Not enough data processed: DataLen %d v.s. cposition %d\n",DataLen-62,cposition);exit(-1);}
      }
   numline++;

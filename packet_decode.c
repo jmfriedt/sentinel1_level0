@@ -12,8 +12,6 @@
 
 //#define dump_payload
 
-struct node {struct noeud* left; struct node* right;};
-
 int next_bit(unsigned char *p,int *cposition,int *bposition)
 {int bit=((p[*cposition]>>(*bposition))&1);
  (*bposition)--;
