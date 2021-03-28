@@ -220,6 +220,14 @@ provided below, emphasizing the consistency and reproducibility of the results.
 
 <img src="calibration_S6.png">
 
+<h1>TODO</h1>
+
+As I am now processing 18 raw datasets of a Sentinel1 flight over western europe, taking forever to 
+generate outputs, it seems clear that a multithreaded approach would increase speed as seen on SNAP
+(with the caveat of keeping CPU usage and memory requirement reasonable, which is NOT the case of SNAP !).
+Since each chuck of data is processed independently of neighbours, this parallelization seems quite
+obvious to implement.
+
 <h1>Acknowledgement</h1>
 
 This result could not have been achieved without the sample code provided at
