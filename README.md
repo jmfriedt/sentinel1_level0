@@ -220,6 +220,18 @@ provided below, emphasizing the consistency and reproducibility of the results.
 
 <img src="calibration_S6.png">
 
+<h1>Conclusion</h1>
+
+Our original objective was reproducing the long strip of data acquisition over Europe
+for radiometric measurement using the raw Sentinel 1 data. We believe this result is now
+achieved as demonstrated in the following chart
+
+<img src="2103_europe_results/path508.png">
+
+generated using the <a href="./2103_europe_resultsi/go.m">script</a> assuming all
+datasets have been fetched from the ESA Copernicus web site (29 GB) and processed
+using the software described above (150 GB).
+
 <h1>TODO</h1>
 
 As I am now processing 18 raw datasets of a Sentinel1 flight over western europe, taking forever to 
