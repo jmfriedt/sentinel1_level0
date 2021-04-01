@@ -228,7 +228,7 @@ achieved as demonstrated in the following chart
 
 <img src="2103_europe_results/path508.png">
 
-generated using the <a href="./2103_europe_resultsi/go.m">script</a> assuming all
+generated using the <a href="./2103_europe_results/go.m">script</a> assuming all
 datasets have been fetched from the ESA Copernicus web site (29 GB) and processed
 using the software described above (150 GB).
 
