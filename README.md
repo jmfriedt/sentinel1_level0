@@ -234,7 +234,7 @@ using the software described above (150 GB).
 
 <h1>TODO</h1>
 
-As I am now processing 18 raw datasets of a Sentinel1 flight over western europe, taking forever to 
+After processing 18 raw datasets of a Sentinel1 flight over western europe, taking forever to 
 generate outputs, it seems clear that a multithreaded approach would increase speed as seen on SNAP
 (with the caveat of keeping CPU usage and memory requirement reasonable, which is NOT the case of SNAP !).
 Since each chuck of data is processed independently of neighbours, this parallelization seems quite
