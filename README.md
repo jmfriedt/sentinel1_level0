@@ -232,6 +232,14 @@ generated using the <a href="./2103_europe_resultsi/go.m">script</a> assuming al
 datasets have been fetched from the ESA Copernicus web site (29 GB) and processed
 using the software described above (150 GB).
 
+<h1>TODO</h1>
+
+As I am now processing 18 raw datasets of a Sentinel1 flight over western europe, taking forever to 
+generate outputs, it seems clear that a multithreaded approach would increase speed as seen on SNAP
+(with the caveat of keeping CPU usage and memory requirement reasonable, which is NOT the case of SNAP !).
+Since each chuck of data is processed independently of neighbours, this parallelization seems quite
+obvious to implement.
+
 <h1>Acknowledgement</h1>
 
 This result could not have been achieved without the sample code provided at
