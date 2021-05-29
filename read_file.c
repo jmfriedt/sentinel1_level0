@@ -69,7 +69,7 @@ int main(int argc, char **argv)
  {
   // Begin SAR Space Protocol Data Unit p.14/85
   read(f,&c,2);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
-  c=htons(c);
+  c=ntohs(c);
   // On the i386 the host byte order is Least Significant Byte first, whereas the network byte
   // order, as used on the Internet, is Most Significant Byte first
   Secondary=(c>>11)&0x01;
@@ -78,12 +78,12 @@ int main(int argc, char **argv)
   printf("%04x: %d(1)\t%d(65)\t%d(12)\t",c,Secondary,PID,PCAT);
  
   read(f,&c,2);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
-  c=htons(c);
+  c=ntohs(c);
   Sequence=(c>>14);
   Count=(c&0x3f);
   
   read(f,&c,2);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
-  DataLen=htons(c)+1;
+  DataLen=ntohs(c)+1;
   printf("%04x: %x(3)\tCount=%02d\tLen=%d(61..65533)\n",c,Sequence,Count,DataLen);
   if (((DataLen+6)%4)!=0) printf("\nERROR: Length not multiple of 4\n");
   res=read(f,tablo,DataLen);
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
   // coarse and fine time field             (6 bytes)
   tmp32=*(u_int32_t*)tablo;Time=htonl(tmp32);
   printf("\tTime: %d",Time);               // Coarse Time = begin+6 1294507939
-  tmp16=*(u_int16_t*)(tablo+4);tmp16=htons(tmp16);
+  tmp16=*(u_int16_t*)(tablo+4);tmp16=ntohs(tmp16);
   printf(":%d",tmp16);                     // Fine Time   = begin+10, *2^(-16) s
   // Fixed ancillary data service           (14 bytes)
   tmp32=*(u_int32_t*)(tablo+6);tmp32=htonl(tmp32);
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
   // Sub-commutation ancillary data: PVT/attitude will be accumulated as 42 words along headers
   // p.27: Counter+value                    (3 bytes)
   printf("\tWordIndex=%hhx",*(u_int8_t*)(tablo+20)); // Word index will increment from 1 to 0x40 to fill
-  tmp16=*(u_int16_t*)(tablo+21);tmp16=htons(tmp16);  // the array described in p.23 with ... vvv
+  tmp16=*(u_int16_t*)(tablo+21);tmp16=ntohs(tmp16);  // the array described in p.23 with ... vvv
   printf("\tWordVal=%hx",tmp16);                   // Word value
 
   // Counter Service                       (8 bytes)
@@ -126,10 +126,10 @@ int main(int argc, char **argv)
   printf(" BlockLen=%hhx(1F)\n",(*(u_int8_t*)(tablo+32))); 
  
   printf("\tDecim=%hhx",*(u_int8_t*)(tablo+34));     // RGDEC
-  tmp16=*(u_int16_t*)(tablo+36);tmp16=htons(tmp16);  // Tx Pulse Ramp Rate
+  tmp16=*(u_int16_t*)(tablo+36);tmp16=ntohs(tmp16);  // Tx Pulse Ramp Rate
   if ((tmp16&0x8000)==0) printf("\tTXPRR=v%x=",tmp16);else printf("\tTXPRR=^%x=",tmp16);
   printf("%d",tmp16&0x7fff); 
-  tmp16=*(u_int16_t*)(tablo+38);tmp16=htons(tmp16);  // Tx Pulse Start Freq
+  tmp16=*(u_int16_t*)(tablo+38);tmp16=ntohs(tmp16);  // Tx Pulse Start Freq
   if ((tmp16&0x8000)==0) printf("\tTXPSF=-0x%x",tmp16);else printf("\tTXPSF=+0x%x",tmp16); // 0 negative, 1 positive ?!
   printf("=%d ",tmp16&0x7fff);             // Word value
   tmp32=*(u_int32_t*)(tablo+40);tmp32=htonl(tmp32)>>8; // keep last 24 bits
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
    {if (file_swath_number!=0)
        {close(result);close(brcfile);printf("\nFILE written %d %d\n",2*NQ,numline);numline=0;}
     file_swath_number=Swath;
-    NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ); // number of quads NQ => Nsamples=2xNQ
+    NQ=*(u_int16_t*)(tablo+59);NQ=ntohs(NQ); // number of quads NQ => Nsamples=2xNQ
     sprintf(filename,"resultSW%02d_T%d_NQ%d.bin",Swath,Time,NQ);
     result=open(filename,O_WRONLY|O_CREAT|O_TRUNC,0644); // TRUNC = remove old data
     sprintf(filename,"brcSW%02d_T%d.bin",Swath,Time);
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
    }
   else 
    {// p.54 RADAR Sample Count               (2 bytes)
-    NQ=*(u_int16_t*)(tablo+59);NQ=htons(NQ); // number of quads NQ => Nsamples=2xNQ
+    NQ=*(u_int16_t*)(tablo+59);NQ=ntohs(NQ); // number of quads NQ => Nsamples=2xNQ
    }
   printf(" NQ=%d\n",NQ);
   // if (NQ==0) fprintf(result,"%d\n",2*NQ);
