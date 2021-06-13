@@ -5,6 +5,8 @@ the results shown in "Identification of C-Band Radio Frequency Interferences
 from Sentinel-1 Data" at https://www.mdpi.com/2072-4292/9/11/1183 and summarized in a presentation
 at the European GNU Radio Days 2021 available at http://jmfriedt.free.fr/gnuradiodays_setinel1_level0.mp4 with the slides at http://jmfriedt.free.fr/slides_sentinel_raw.pdf.
 
+This software might possibly be used as a prequel to https://multiply-sar-pre-processing.readthedocs.io/en/master/
+
 <h1>Compilation</h1>
   
 Working on a GNU/Linux computer (Debian/sid but only using basic functionalities so any distribution
