@@ -12,10 +12,27 @@ f=fopen(filename,'rb');
 if (f<0) v=0;
 else
   fref=37.53472224
-  fs=5/16*4*fref      % case 11 in Range Decimation, p.35 of Packet Protocol Data Unit
-  TXPRRcode=1229;     % upchirp
-  TXPSFcode=-9210;    % start
-  TXPLcode=1918;
+% UPDATE THESE VALUES: here taken from S1A_IW_RAW__0SDV_20210410T055133_20210410T055205_037384_0467D7_5D9B
+  IW=str2num(filename(9:10));  % swath number
+  if (IW==10)
+    fs=3/7*4*fref      % case 10 in Range Decimation, p.35 of Packet Protocol Data Unit
+    TXPRRcode=1605;    % upchirp
+    TXPSFcode=-12335;  % start
+    TXPLcode=1967;
+    else if (IW==11)
+      fs=4/11*4*fref     % case 11 in Range Decimation, p.35 of Packet Protocol Data Unit
+      TXPRRcode=1160;    % upchirp
+      TXPSFcode=-10546;  % start
+      TXPLcode=2327;
+        else if (IW==12)
+          fs=5/16*4*fref     % case 12 in Range Decimation, p.35 of Packet Protocol Data Unit
+          TXPRRcode=1193;    % upchirp
+          TXPSFcode=-9341;   % start
+          TXPLcode=2004;
+            else printf("Wrong swath number");
+        end
+    end
+  end
   
 % range compression 
   TXPRR=TXPRRcode*fref^2/2^21            % MHz/us
