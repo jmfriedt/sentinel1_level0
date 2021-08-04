@@ -1,4 +1,4 @@
-function sol=read_bin(filename, count, l)
+function [sol,ssol]=read_bin(filename, count, l)
 % file name, number of complex data to read, line length
 % x=read_bin('result06_1298411052.bin',floor(6592*1.8), 19950);
 
@@ -29,7 +29,13 @@ else
           TXPRRcode=1193;    % upchirp
           TXPSFcode=-9341;   % start
           TXPLcode=2004;
-            else printf("Wrong swath number");
+            else if (IW==06) % Stripmap
+                 fs=5/16*4*fref     
+                 TXPRRcode=1229;    % upchirp
+                 TXPSFcode=-9210;   % start
+                 TXPLcode=1918;
+               else printf("Wrong swath number");
+            end
         end
     end
   end
@@ -57,12 +63,17 @@ else
 % range compression completed
   clear t
   fclose(f)
+return  % THE END ... azimuth compression will usually not converge
 
-  [m,ind]=max(abs(sol(:)))
-  [r,c]=ind2sub(size(sol),ind);
+  tmpsol=sol;
+  tmpsol(:,end-300:end)=0;
+  tmpsol(:,1:300)=0;
+  [m,ind]=max(abs(tmpsol(:)))
+  clear tmpsol
+  [r,c]=ind2sub(size(sol),ind)
   abs(sol(r,c))
 % search for chirp along azimuth
-  mychirp=sol(r,c-970:c+300);
+  mychirp=sol(r,c-300:c+300);
   figure(1)
   subplot(211)
   plot(unwrap(angle(mychirp)))
@@ -73,13 +84,13 @@ else
   plot(abs(sol(r,:))/max(abs(sol(r,:))));
 
 % azimuth compression
-  ssol=sol';  % avoid dynamic memory allocation
+  ssol=sol;  % avoid dynamic memory allocation
   for k=1:l % size(sol)(1)   % 19950 = sweep range for azimuth compression
     k
     tmp=xcorr(mychirp,sol(k,:)); 
     tmp=tmp(floor(length(mychirp)/2)+1:size(sol)(2)+floor(length(mychirp)/2));
-    ssol(:,k)=tmp;
+    ssol(k,:)=tmp;
   end
 end
-clear sol
+figure
 imagesc(fliplr(flipud(abs(ssol(1:3:end,1:3:end)))),[1 2e8])
