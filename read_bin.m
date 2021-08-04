@@ -1,4 +1,4 @@
-function [sol,ssol]=read_bin(filename, count, l)
+function [sol,nomchirp]=read_bin(filename, count, l)
 % file name, number of complex data to read, line length
 % x=read_bin('result06_1298411052.bin',floor(6592*1.8), 19950);
 
@@ -49,15 +49,15 @@ else
   tim=linspace(-TXPL/2,TXPL/2,N);
   phi1=TXPSF+TXPRR*TXPL/2
   phi2=TXPRR/2
-  nomchip=exp(j*2*pi*(phi1*tim+phi2*tim.^2));
+  nomchirp=exp(j*2*pi*(phi1*tim+phi2*tim.^2));
   
   sol=zeros(l,count); % size(t)(2),size(t)(1));      % avoid dynamic memory allocation
   for k=1:count % size(t)(1)   % 6592 = sweep along azimuth for range compression
     t=fread(f,2*l,'float');    % dynamically read to avoid filling memory with a huge t
     t=t(1:2:end)+t(2:2:end)*i; % see GNU Radio's read_complex_binary
     k
-    tmp=xcorr(nomchip,t);
-    tmp=tmp(floor(length(nomchip)/2)+1:length(t)+floor(length(nomchip)/2));
+    tmp=xcorr(nomchirp,t);
+    tmp=tmp(floor(length(nomchirp)/2)+1:length(t)+floor(length(nomchirp)/2));
     sol(:,k)=tmp;
   end
 % range compression completed
