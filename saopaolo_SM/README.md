@@ -21,6 +21,34 @@ and azimuth compress using this chirp
 
 <img src="210803_sm_map.png">
 
-3. As shown in ``cmp_pulse.m``, the theoretical azimuth chirp seems to be 
-properly predicted but the correlation with this phase distribution does not
-seem to allow for azimuth compression: to be understood !
+3. As shown in ``cmp_pulse.m``, the theoretical azimuth chirp is properly predicted
+and compares well with the experimental phase distribution along azimuth assuming that
+the strongest echo acts as a Dirac convolution to the chirp.
+
+4. ``pulse_compression.m'' demonstrates that both experimental and theoretical chirps
+allow for azimuth compression. The ``ph1'' chirp expression is the complete equation
+from "GMTSAR: An InSAR Processing System Based on Generic Mapping Tools" by D. Sandwell
+& al (section B.5 "Azimuth compression" pp.51-) and ``phi2'' is a simplified expression with 
+a 0 Doppler Centroid (DC) whose exceprt is provided below for convenience.
+
+Comparison of experimental and theoretical expression of the phase along azimuth:
+
+<img src="saopauloSM_phase.png">
+
+Azimuth pulse compresion using the experimental phase from the strongest target:
+
+<img src="saopauloSM_expe.png">
+
+Azimuth pulse compresion using the full theoretical expression of the phase including Doppler
+Centroid (ph1 in ``pulse_compression.m'')
+
+<img src="saopauloSM_ph1.png">
+
+Azimuth pulse compresion using the simplified theoretical expression of the phase excluding Doppler
+Centroid (ph2 in ``pulse_compression.m'')
+
+<img src="saopauloSM_ph2.png">
+
+<img src="GMTSAR.png">
+
+
