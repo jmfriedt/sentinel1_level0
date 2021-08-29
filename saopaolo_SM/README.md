@@ -71,8 +71,3 @@ Centroid (ph2 in ``pulse_compression.m``)
 
 <img src="saopauloSM_top_ph2.png">
 
-Copy of the GMTSAR part of the book related to azimuth compression
-
-<img src="GMTSAR.png">
-
-
