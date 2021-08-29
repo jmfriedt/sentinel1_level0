@@ -25,10 +25,10 @@ and azimuth compress using this chirp
 and compares well with the experimental phase distribution along azimuth assuming that
 the strongest echo acts as a Dirac convolution to the chirp.
 
-4. ``pulse_compression.m'' demonstrates that both experimental and theoretical chirps
-allow for azimuth compression. The ``ph1'' chirp expression is the complete equation
+4. ``pulse_compression.m`` demonstrates that both experimental and theoretical chirps
+allow for azimuth compression. The ``ph1`` chirp expression is the complete equation
 from "GMTSAR: An InSAR Processing System Based on Generic Mapping Tools" by D. Sandwell
-& al (section B.5 "Azimuth compression" pp.51-) and ``phi2'' is a simplified expression with 
+& al (section B.5 "Azimuth compression" pp.51-) and ``phi2`` is a simplified expression with 
 a 0 Doppler Centroid (DC) whose exceprt is provided below for convenience.
 
 Comparison of experimental and theoretical expression of the phase along azimuth:
@@ -40,12 +40,12 @@ Azimuth pulse compresion using the experimental phase from the strongest target:
 <img src="saopauloSM_expe.png">
 
 Azimuth pulse compresion using the full theoretical expression of the phase including Doppler
-Centroid (ph1 in ``pulse_compression.m'')
+Centroid (ph1 in ``pulse_compression.m``)
 
 <img src="saopauloSM_ph1.png">
 
 Azimuth pulse compresion using the simplified theoretical expression of the phase excluding Doppler
-Centroid (ph2 in ``pulse_compression.m'')
+Centroid (ph2 in ``pulse_compression.m``)
 
 <img src="saopauloSM_ph2.png">
 
