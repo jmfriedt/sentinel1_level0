@@ -49,6 +49,30 @@ Centroid (ph2 in ``pulse_compression.m``)
 
 <img src="saopauloSM_ph2.png">
 
+Copy of the GMTSAR part of the book related to azimuth compression
+
+<img src="GMTSAR.png">
+
+Repeat the comparison in the sea area where ships are waiting in front of the harbour:
+
+<img src="saopauloSM_top_phase.png">
+
+Azimuth pulse compresion using the experimental phase from the strongest target:
+
+<img src="saopauloSM_top_expe.png">
+
+Azimuth pulse compresion using the full theoretical expression of the phase including Doppler
+Centroid (ph1 in ``pulse_compression.m``)
+
+<img src="saopauloSM_top_ph1.png">
+
+Azimuth pulse compresion using the simplified theoretical expression of the phase excluding Doppler
+Centroid (ph2 in ``pulse_compression.m``)
+
+<img src="saopauloSM_top_ph2.png">
+
+Copy of the GMTSAR part of the book related to azimuth compression
+
 <img src="GMTSAR.png">
 
 
