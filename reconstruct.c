@@ -29,7 +29,7 @@ void reconstruction(unsigned char *BRCn,unsigned char *THIDXn,int *hcode,int NQ,
      {switch (BRCn[BRCindex]) 
        {case 0: 
          if (THIDXn[BRCindex]<=3) 
-           {if ((hcode[hcode_index]>-3) && (hcode[hcode_index]<3))
+           {if (abs(hcode[hcode_index])<3)
                result[hcode_index]=(float)hcode[hcode_index];
             else
                result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC0[THIDXn[BRCindex]];
@@ -38,7 +38,7 @@ void reconstruction(unsigned char *BRCn,unsigned char *THIDXn,int *hcode,int NQ,
         break;
         case 1: 
          if (THIDXn[BRCindex]<=3) 
-           {if ((hcode[hcode_index]>-4) && (hcode[hcode_index]<4))
+           {if (abs(hcode[hcode_index])<4)
                result[hcode_index]=(float)hcode[hcode_index];
             else
                result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC1[THIDXn[BRCindex]];
@@ -47,7 +47,7 @@ void reconstruction(unsigned char *BRCn,unsigned char *THIDXn,int *hcode,int NQ,
          break;
         case 2: 
          if (THIDXn[BRCindex]<=5) 
-           {if ((hcode[hcode_index]>-6) && (hcode[hcode_index]<6))
+           {if (abs(hcode[hcode_index])<6)
                result[hcode_index]=(float)hcode[hcode_index];
             else
                result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC2[THIDXn[BRCindex]];
@@ -56,7 +56,7 @@ void reconstruction(unsigned char *BRCn,unsigned char *THIDXn,int *hcode,int NQ,
          break;
         case 3: 
          if (THIDXn[BRCindex]<=6) 
-           {if ((hcode[hcode_index]>-9) && (hcode[hcode_index]<9))
+           {if (abs(hcode[hcode_index])<9)
                result[hcode_index]=(float)hcode[hcode_index];
             else
                result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC3[THIDXn[BRCindex]];
@@ -65,7 +65,7 @@ void reconstruction(unsigned char *BRCn,unsigned char *THIDXn,int *hcode,int NQ,
          break;
         case 4: 
          if (THIDXn[BRCindex]<=8) 
-           {if ((hcode[hcode_index]>-15) && (hcode[hcode_index]<15))
+           {if (abs(hcode[hcode_index])<15)
                result[hcode_index]=(float)hcode[hcode_index];
             else
                result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC4[THIDXn[BRCindex]];
@@ -80,4 +80,3 @@ void reconstruction(unsigned char *BRCn,unsigned char *THIDXn,int *hcode,int NQ,
   }
  while (hcode_index<NQ);
 }
-

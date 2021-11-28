@@ -91,10 +91,10 @@ static int BRC(int BRCn,unsigned char *p,int *cposition,int *bposition)
 {char hcode,sign;
  int b;
  switch (BRCn) {
-   case 0: BRCn=3;break; // number of steps to reach the leaves
-   case 1: BRCn=4;break; // number of steps to reach the leaves
-   case 2: BRCn=6;break; // number of steps to reach the leaves
-   case 3: BRCn=9;break; // number of steps to reach the leaves
+   case 0: BRCn=3;break; // number of steps to reach the leaves BRC0
+   case 1: BRCn=4;break; // number of steps to reach the leaves BRC1
+   case 2: BRCn=6;break; // number of steps to reach the leaves BRC2
+   case 3: BRCn=9;break; // number of steps to reach the leaves BRC3
    case 4: return(BRC4(p,cposition,bposition));printf("\nCheck if BRC4 output is correct\n");exit(0);break;
    default: printf("ERROR");exit(-1);
   }
@@ -104,7 +104,7 @@ static int BRC(int BRCn,unsigned char *p,int *cposition,int *bposition)
  do {
    b=next_bit(p,cposition,bposition);
    if (b==0)   // 0: end of tree
-      if ((BRCn==9) && (hcode==0))
+      if ((BRCn==9) && (hcode==0))                  // first 0 (hcode==0) of BRC3
         {b=next_bit(p,cposition,bposition);
          if (b==0)
             return((int)(int)sign*(int)hcode);      // we reached 00 of BRC3
@@ -117,9 +117,10 @@ static int BRC(int BRCn,unsigned char *p,int *cposition,int *bposition)
       {hcode++;                                // 1: continue
        if ((BRCn==9) && (hcode==1)) hcode++;
        if (hcode==BRCn)                        // unless last 1 was reached 
-          return((int)((int)sign*(int)hcode));
+          return((int)((int)sign*(int)hcode)); // end of tree reached
       }
  } while (hcode<BRCn);
+ exit(-1);                                     // ERROR in decoding Huffman
  return(99);                                   // should never be reached
 }
 
