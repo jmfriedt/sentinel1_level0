@@ -24,8 +24,9 @@ if (exist('data_tif')==0)
   end
 end
 
-Ncompare=5000;   % vector length for comparing matching patterns between our decoding & reference dataset
-d=dir('S1A_IW_RAW__0SDV_20200608T101309_20200608T101341_032924_03D05A_A50C.SAFE/resultSW10*bin');
+Ncompare=5230;   % vector length for comparing matching patterns between our decoding & reference dataset
+d=dir('S1A_IW_RAW__0SDV_20200608T101309_20200608T101341_032924_03D05A_A50C.SAFE/resultSW*bin');
+% we know SW1 is in resultSW10* but check all swaths to make sure there is only a single match
 for k=1:length(d)
   f=fopen(['S1A_IW_RAW__0SDV_20200608T101309_20200608T101341_032924_03D05A_A50C.SAFE/',d(k).name],'rb');
   data_bin=fread(f,2*l,'float');
@@ -34,7 +35,7 @@ for k=1:length(d)
   sol=findstr(data_tif,data_bin(end-Ncompare:end));
   if (isempty(sol)==0)
      ['Solution found in ',d(k).name,' @ ',num2str(sol)]
-%     [data_bin(end-Ncompare-5:end-Ncompare+10)-data_tif(sol-5:sol+10)]
+     [data_bin(end-Ncompare-5:end-Ncompare+10)-data_tif(sol-5:sol+10)]
   end
   if (display_chart)
     figure

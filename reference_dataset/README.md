@@ -3,7 +3,8 @@ Sentinel-1-Level-0-Data-Decoding-Package_v1_3.pdf and that the data file
 s1a-iw-raw-s-vv-20200608t101309-20200608t101341-032924-03d05a.dat
 in the directory
 S1A_IW_RAW__0SDV_20200608T101309_20200608T101341_032924_03D05A_A50C.SAFE was 
-decoded using this read_file program. The resulting .bin files (only swath 1
+decoded using this read_file program. This processing takes exactly 1-h on a
+Panasonic CF-19 laptop fitted with a SSD hard drive. The resulting .bin files (only swath 1
 with index 10 will be of interest to us) should be
 ```
 $ ls -l ../r/S1A_IW_RAW__0SDV_20200608T101309_20200608T101341_032924_03D05A_A50C.SAFE
