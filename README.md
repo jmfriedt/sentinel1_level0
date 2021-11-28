@@ -25,6 +25,12 @@ swaths to be assembled (IW datasets).
 
 <h1>Current status and understanding on decoding</h1>
 
+*Thanks to the sharp analysis of Nicolas Desiderio Gonzalez Alonso De Linaje at the 
+Technical University of Denmark, the software has now been compared with the reference
+dataset provided by ESA (see reference_dataset directory) and it is believed that the
+remaining processing bugs have been removed (Nov. 2021). The text below represents the
+initial line of thought that led to Sentinel1 Level0 decoding software.*
+
 CCSDS is a well documented protocol a bit challenging to get familiar with, as
 was discussed earlier when decoding Meteor M2 weather satellite images
 (https://archive.fosdem.org/2019/schedule/event/sdr_meteorm2n/). Here the error
