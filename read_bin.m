@@ -1,10 +1,11 @@
 function [sol,nomchirp]=read_bin(filename, count, l)
 % file name, number of complex data to read, line length
-% x=read_bin('result06_1298411052.bin',floor(6592*1.8), 19950);
+% x=read_bin('resultSW10_T1275646420_NQ11919.bin',floor(6592*1.8), 11919*2);
+%                                      ^^^^^                      ^ NQx2 ^
 
-% filename='result06_1298411052.bin'   % filename
-% count=floor(6592*1.8)                % max number of lines (azimuth) my computer can handle
-% l=19950                              % range length (NQ*2)
+% filename='resultSW10_T1275646420_NQ11919.bin' % filename
+% count=floor(6592*1.8)                         % max number of lines (azimuth) my computer can handle
+% l=11919*2                                     % range length (NQ*2)
 
 pkg load signal
 
