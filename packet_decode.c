@@ -8,7 +8,7 @@
 #include "reconstruct.h"
 
 //#define msg printf
-#define msg 
+#define msg(...)
 
 //#define dump_payload
 
@@ -19,11 +19,12 @@ int next_bit(unsigned char *p,int *cposition,int *bposition)
  return(bit);
 }
 
-static int BRC4(unsigned char *p,int *cposition,int *bposition) // TODO: never tested !
-{char hcode,sign;
+static struct sh_code BRC4(unsigned char *p,int *cposition,int *bposition) // TODO: never tested !
+{int hcode,sign;
+ struct sh_code sol;
  int b;
  sign=next_bit(p,cposition,bposition);
- if (sign==0) sign=1; else sign=-1;
+ if (sign==0) sol.sign=1; else sol.sign=-1;
  hcode=0;
  do {
    b=next_bit(p,cposition,bposition);
@@ -31,65 +32,69 @@ static int BRC4(unsigned char *p,int *cposition,int *bposition) // TODO: never t
     {case 5:
        if (b==0) // must be BEFORE hcode=5 at bottom
           {b=next_bit(p,cposition,bposition);
-           if (b==0) return(5); // BRC4,1100
-           else   return(6); // BRC4,1101
+           if (b==0) {sol.mcode=5;return(sol);}  // BRC4,1100
+           else      {sol.mcode=6;return(sol);}  // BRC4,1101
           }
        else hcode=6;
      break;
      case 6:
      case 7:
      case 8:
-       if (b==0) return(hcode+1);
+       if (b==0) {sol.mcode=hcode+1;return(sol);}
        else hcode++;
      break;
      case 9:
        if (b==0) 
           {b=next_bit(p,cposition,bposition);
-           if (b==0) return(10); // BRC4,11111100
-           else return(11);      // BRC4,11111101
+           if (b==0) {sol.mcode=10;return(sol);} // BRC4,11111100
+           else      {sol.mcode=11;return(sol);} // BRC4,11111101
           }
        else hcode++;
      break;
      case 10:
        if (b==0) 
           {b=next_bit(p,cposition,bposition);
-           if (b==0) return(12); // BRC4,111111100
-           else return(13);      // BRC4,111111101
+           if (b==0) {sol.mcode=12;return(sol);} // BRC4,111111100
+           else      {sol.mcode=13;return(sol);} // BRC4,111111101
           }
        else 
           {b=next_bit(p,cposition,bposition);
-           if (b==0) return(14); // BRC4,111111100
-           else return(15);      // BRC4,111111101
+           if (b==0) {sol.mcode=14;return(sol);} // BRC4,111111100
+           else      {sol.mcode=15;return(sol);} // BRC4,111111101
           }
      break;
      case 0:
        if (b==0)   // first 0
           {b=next_bit(p,cposition,bposition);
-           if (b==0) return(0); // BRC4,00 
+           if (b==0) {sol.mcode=0;return(sol);}  // BRC4,00 
            else
               {b=next_bit(p,cposition,bposition);
-               if (b==0) return(1); // BRC4,010
-               else      return(2); // BRC4,011
+               if (b==0) {sol.mcode=1;return(sol);} // BRC4,010
+               else      {sol.mcode=2;return(sol);} // BRC4,011
               }
           }
        else
           {b=next_bit(p,cposition,bposition);
            if (b==0)  // BRC4,00 
               {b=next_bit(p,cposition,bposition);
-               if (b==0) return(3); // BRC4,100
-               else      return(4); // BRC4,101
+               if (b==0) {sol.mcode=3;return(sol);} // BRC4,100
+               else      {sol.mcode=4;return(sol);} // BRC4,101
               }
            else hcode=5;
           }
      break;
     }
  } while (hcode<=15);
- return(999);
+ sol.mcode=999;
+ exit(-1);    // should never get here
+ return(sol);
 }
 
-static int BRC(int BRCn,unsigned char *p,int *cposition,int *bposition)
-{char hcode,sign;
+static struct sh_code BRC(int BRCn,unsigned char *p,int *cposition,int *bposition)
+{int hcode;
+ int sign;
  int b;
+ struct sh_code sol;
  switch (BRCn) {
    case 0: BRCn=3;break; // number of steps to reach the leaves BRC0
    case 1: BRCn=4;break; // number of steps to reach the leaves BRC1
@@ -99,29 +104,30 @@ static int BRC(int BRCn,unsigned char *p,int *cposition,int *bposition)
    default: printf("ERROR");exit(-1);
   }
  sign=next_bit(p,cposition,bposition);
- if (sign==0) sign=1; else sign=-1;
+ if (sign==0) sol.sign=1; else sol.sign=-1;
  hcode=0;
  do {
    b=next_bit(p,cposition,bposition);
-   if (b==0)   // 0: end of tree
-      if ((BRCn==9) && (hcode==0))                  // first 0 (hcode==0) of BRC3
+   if (b==0)                                   // 0: end of tree
+      if ((BRCn==9) && (hcode==0))             // first 0 (hcode==0) of BRC3
         {b=next_bit(p,cposition,bposition);
          if (b==0)
-            return((int)(int)sign*(int)hcode);      // we reached 00 of BRC3
+            {sol.mcode=hcode;return(sol);}     // we reached 00 of BRC3
          else
-            return((int)(int)sign*(int)(hcode+1));  // we reached 01 of BRC3
+            {sol.mcode=hcode+1;return(sol);}   // we reached 01 of BRC3
         }
       else
-        return((int)(int)sign*(int)hcode);     // we reached 0 -> return
+        {sol.mcode=hcode;return(sol);}         // we reached 0 -> return
    else 
       {hcode++;                                // 1: continue
        if ((BRCn==9) && (hcode==1)) hcode++;
        if (hcode==BRCn)                        // unless last 1 was reached 
-          return((int)((int)sign*(int)hcode)); // end of tree reached
+          {sol.mcode=hcode;return(sol);}       // end of tree reached
       }
  } while (hcode<BRCn);
  exit(-1);                                     // ERROR in decoding Huffman
- return(99);                                   // should never be reached
+ sol.mcode=99;
+ return(sol);                                  // should never be reached
 }
 
 unsigned char get_THIDX(unsigned char *p,int *cposition,int *bposition)
@@ -138,10 +144,10 @@ unsigned char get_THIDX(unsigned char *p,int *cposition,int *bposition)
 int packet_decode(unsigned char *p,int NQ,float *IE, float *IO, float *QE, float *QO,char *brc,int *brcpos) // FDBAQ: section 4.4 p.67
 {// IE 1st 3 bits = BRC
  // QE first 8 bits = THIDX
- int hcodeIE[52378];
- int hcodeIO[52378];
- int hcodeQE[52378];
- int hcodeQO[52378];
+ struct sh_code hcodeIE[52378];
+ struct sh_code hcodeIO[52378];
+ struct sh_code hcodeQE[52378];
+ struct sh_code hcodeQO[52378];
  unsigned char BRCn[410];   // max value p.55: 52378/128=409.2
  unsigned char THIDXn[410];
  int BRCindex;
