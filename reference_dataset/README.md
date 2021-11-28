@@ -21,7 +21,9 @@ $ ls -l ../r/S1A_IW_RAW__0SDV_20200608T101309_20200608T101341_032924_03D05A_A50C
 -rw-r--r-- 1 jmfriedt jmfriedt 268701936 Nov 28 17:38 resultSW10_T1275646437_NQ11919.bin
 -rw-r----- 1 jmfriedt jmfriedt 951769796 Jun  8  2020 s1a-iw-raw-s-vv-20200608t101309-20200608t101341-032924-03d05a.dat
 ```
-running this reference_comparison.m program with GNU/Octave will lead to
+running this reference_comparison.m program with GNU/Octave will lead to the display of a 15-long matching list in 
+binary files when compared to the provided TIFF file, with the following lines displaying on the left our set of complex
+values and on the right the TIFF file complex values around the matching index:
 ```
 octave:13> reference_comparison
 lines = 15499
@@ -52,5 +54,5 @@ ans =
    2.600039958953857e+00 - 2.861623191833496e+01i   2.600039958953857e+00 - 2.861623191833496e+01i
    2.600039958953857e+00 - 7.801248073577881e+00i   2.600039958953857e+00 - 7.801248073577881e+00i
 ```
-which demonstrates that the last 15 lines but there is a sign issue in the second and fourth line
+which demonstrates that the last 15 lines match but there is a sign issue in the second and fourth line
 (imaginary part) as well as real part of the sixth line.
