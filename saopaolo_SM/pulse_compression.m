@@ -46,8 +46,9 @@ tmp=xcorr(sol(k,:),mychirp);
 plot(abs(tmp))
 end        % -------------------------
 
-load all1500bot.mat  % mychirp1500.mat is included in this file
-%load mychirp_water5000.mat
+% load all1500bot.mat  % mychirp1500.mat is included in this file
+load all5000top.mat
+% load mychirp_water5000.mat
 
 % ------------ 210829
 %https://celestrak.com/satcat/tle.php?CATNR=39634
@@ -99,21 +100,23 @@ legend('expe','ph1','ph2')
 % ------------ 210829
 
 clear ssol
-for k=1:size(sol)(1) % 19950 - first = range ; second = azimuth
+kk=1;
+for k=1:10:size(sol)(1) % 19950 - first = range ; second = azimuth
   k
   tmp=xcorr(sol(k,:),mychirp);
-  ssol(:,k)=tmp(size(x)(1)-size(mychirp)(2):end);
+  ssol(:,kk)=tmp(size(x)(1)-size(mychirp)(2):end);
   tmp=xcorr(sol(k,:),ph1);
-  ssol1(:,k)=tmp(size(x)(1)-size(ph1)(2):end);
+  ssol1(:,kk)=tmp(size(x)(1)-size(ph1)(2):end);
   tmp=xcorr(sol(k,:),ph2);
-  ssol2(:,k)=tmp(size(x)(1)-size(ph2)(2):end);
+  ssol2(:,kk)=tmp(size(x)(1)-size(ph2)(2):end);
+  kk=kk+1;
 end
 figure
-imagesc(abs(ssol(:,1:10:end)),[0 1e8])
+imagesc(abs(ssol(:,1:1:end)),[0 1e8])
 figure
-imagesc(abs(ssol1(:,1:10:end)),[0 50000])
+imagesc(abs(ssol1(:,1:1:end)),[0 50000])
 figure
-imagesc(abs(ssol2(:,1:10:end)),[0 50000])
+imagesc(abs(ssol2(:,1:1:end)),[0 50000])
 return  % THE END
 
 m=zeros(200,1500);
