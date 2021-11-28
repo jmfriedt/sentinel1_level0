@@ -32,7 +32,7 @@ void reconstruction(unsigned char *BRCn,unsigned char *THIDXn,int *hcode,int NQ,
            {if ((hcode[hcode_index]>-3) && (hcode[hcode_index]<3))
                result[hcode_index]=(float)hcode[hcode_index];
             else
-               result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC0[abs(hcode[hcode_index])];
+               result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC0[THIDXn[BRCindex]];
            }
          else  result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*NRL0[abs(hcode[hcode_index])]*SF[THIDXn[BRCindex]];
         break;
@@ -41,7 +41,7 @@ void reconstruction(unsigned char *BRCn,unsigned char *THIDXn,int *hcode,int NQ,
            {if ((hcode[hcode_index]>-4) && (hcode[hcode_index]<4))
                result[hcode_index]=(float)hcode[hcode_index];
             else
-               result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC1[abs(hcode[hcode_index])];
+               result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC1[THIDXn[BRCindex]];
            }
          else  result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*NRL1[abs(hcode[hcode_index])]*SF[THIDXn[BRCindex]];
          break;
@@ -50,7 +50,7 @@ void reconstruction(unsigned char *BRCn,unsigned char *THIDXn,int *hcode,int NQ,
            {if ((hcode[hcode_index]>-6) && (hcode[hcode_index]<6))
                result[hcode_index]=(float)hcode[hcode_index];
             else
-               result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC2[abs(hcode[hcode_index])];
+               result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC2[THIDXn[BRCindex]];
            }
          else  result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*NRL2[abs(hcode[hcode_index])]*SF[THIDXn[BRCindex]];
          break;
@@ -59,7 +59,7 @@ void reconstruction(unsigned char *BRCn,unsigned char *THIDXn,int *hcode,int NQ,
            {if ((hcode[hcode_index]>-9) && (hcode[hcode_index]<9))
                result[hcode_index]=(float)hcode[hcode_index];
             else
-               result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC3[abs(hcode[hcode_index])];
+               result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC3[THIDXn[BRCindex]];
            }
          else  result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*NRL3[abs(hcode[hcode_index])]*SF[THIDXn[BRCindex]];
          break;
@@ -68,7 +68,7 @@ void reconstruction(unsigned char *BRCn,unsigned char *THIDXn,int *hcode,int NQ,
            {if ((hcode[hcode_index]>-15) && (hcode[hcode_index]<15))
                result[hcode_index]=(float)hcode[hcode_index];
             else
-               result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC4[abs(hcode[hcode_index])];
+               result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*BRC4[THIDXn[BRCindex]];
            }
          else  result[hcode_index]=(float)(hcode[hcode_index]/abs(hcode[hcode_index]))*NRL4[abs(hcode[hcode_index])]*SF[THIDXn[BRCindex]];
          break;

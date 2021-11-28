@@ -27,7 +27,7 @@ cat result.dat  | sed 's/[0-9]//g' | sed 's/-//g' | sed 's/\.//g' | sed 's/(//g'
 #include <fcntl.h>
 #include <unistd.h>
 #include <math.h>
-#include <arpa/inet.h> // htonl for proper endianness
+#include <arpa/inet.h> // ntohl for proper endianness
 
 #include "packet_decode.h"
 #include "bypass.h"
@@ -93,19 +93,19 @@ int main(int argc, char **argv)
   // https://www.andrews.edu/~tzs/timeconv/timedisplay.php
   // Time Conversion Results Jan 12, 2021 17:32:01 UTC  =  GPS Time 1294507939
   // coarse and fine time field             (6 bytes)
-  tmp32=*(u_int32_t*)tablo;Time=htonl(tmp32);
+  tmp32=*(u_int32_t*)tablo;Time=ntohl(tmp32);
   printf("\tTime: %d",Time);               // Coarse Time = begin+6 1294507939
   tmp16=*(u_int16_t*)(tablo+4);tmp16=ntohs(tmp16);
   printf(":%d",tmp16);                     // Fine Time   = begin+10, *2^(-16) s
   // Fixed ancillary data service           (14 bytes)
-  tmp32=*(u_int32_t*)(tablo+6);tmp32=htonl(tmp32);
+  tmp32=*(u_int32_t*)(tablo+6);tmp32=ntohl(tmp32);
   printf("\t%08x(352EF853)",tmp32);        // Sync Marker = begin+12, 352EF853
   if (tmp32!=0x352EF853) printf("\nERROR: Sync marker != 352EF853");
-  tmp32=*(u_int32_t*)(tablo+10);tmp32=htonl(tmp32);
+  tmp32=*(u_int32_t*)(tablo+10);tmp32=ntohl(tmp32);
   //printf(" %08x",tmp32);                 // Data Take ID= begin+16 (TBD)
   //printf("\t%hhx",*(u_int8_t*)tablo+14); // ECC Number  = begin+20  ?! /!\ ?!
   //printf("\t%hhx",*(u_int8_t*)tablo+15); // TestMode/RXID=begin+21
-  tmp32=*(u_int32_t*)(tablo+16);tmp32=htonl(tmp32);
+  tmp32=*(u_int32_t*)(tablo+16);tmp32=ntohl(tmp32);
   //printf("\t%08x",tmp32);                  // Config ID   = begin+22 (TBD)
   // page 22
 
@@ -116,9 +116,9 @@ int main(int argc, char **argv)
   printf("\tWordVal=%hx",tmp16);                   // Word value
 
   // Counter Service                       (8 bytes)
-  tmp32=*(u_int32_t*)(tablo+23);tmp32=htonl(tmp32);
+  tmp32=*(u_int32_t*)(tablo+23);tmp32=ntohl(tmp32);
   printf("\t%08x",tmp32);                  // Space packet count (4 bytes)
-  tmp32=*(u_int32_t*)(tablo+27);tmp32=htonl(tmp32);
+  tmp32=*(u_int32_t*)(tablo+27);tmp32=ntohl(tmp32);
   printf(" %08x",tmp32);                   // PRI count (4 bytes)
   BAQ=(*(u_int8_t*)(tablo+31))&0x1f;       // BAQ mode 0x0c=FDBAQ mode0 nominal p.33: 
   printf(" BAQ=%02x(c)", (*(u_int8_t*)(tablo+31))); 
@@ -132,9 +132,9 @@ int main(int argc, char **argv)
   tmp16=*(u_int16_t*)(tablo+38);tmp16=ntohs(tmp16);  // Tx Pulse Start Freq
   if ((tmp16&0x8000)==0) printf("\tTXPSF=-0x%x",tmp16);else printf("\tTXPSF=+0x%x",tmp16); // 0 negative, 1 positive ?!
   printf("=%d ",tmp16&0x7fff);             // Word value
-  tmp32=*(u_int32_t*)(tablo+40);tmp32=htonl(tmp32)>>8; // keep last 24 bits
+  tmp32=*(u_int32_t*)(tablo+40);tmp32=ntohl(tmp32)>>8; // keep last 24 bits
   printf("TXPL=%08x=%d ",tmp32,tmp32);     // TX Pulse length (3 bytes)
-  tmp32=*(u_int32_t*)(tablo+44);tmp32=htonl(tmp32)>>8; // keep last 24 bits
+  tmp32=*(u_int32_t*)(tablo+44);tmp32=ntohl(tmp32)>>8; // keep last 24 bits
   printf("PRI=%08x=%d",tmp32,tmp32);       // PRI, needed for Doppler centroid analysis (3 bytes)
   
   cal_p=((*(u_int8_t*)(tablo+53))>>4)&0x07;

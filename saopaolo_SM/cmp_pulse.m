@@ -33,11 +33,11 @@ for th=[42.05 45.49 43.8]
 
   if (th==42.05)
     subplot(211)
-    plot(t,unwrap(angle(mychirp)),'b')
-    hold on
+    plot(t,unwrap(angle(mychirp)),'b');hold on
     plot(t([350:850]-100),unwrap(angle(mychirp_gnd))+480,'g')
+  else
+    plot(t,-4*pi/l*Rpp/2*t.^2+max(unwrap(angle(mychirp))),'r')
   end
-  plot(t,-4*pi/l*Rpp/2*t.^2+max(unwrap(angle(mychirp))),'r')
 end
 xlabel('time (s)');ylabel('phase (rad)')
 a=polyfit(t(1:end-1),diff(unwrap(angle(mychirp))),1);
@@ -49,3 +49,9 @@ legend([num2str(a(1)),' rad/s expe (water)'],'expe (ground)',[num2str(-4*pi/l*Rp
 % Rpp = 51.174 ans = -6.9649
 % Rpp = 52.687 ans = -7.1708
 %              v.s   -7.56 m.s^-2 experimental : 2.5% error
+
+
+fDC=0; % -2*Vs/l*(x-tc*Vs)/R0;
+fR=2/l*Vs^2/R0;
+chirp=exp(j*4*pi*R0/l)*exp(j*2*pi*(fDC*t+fR*t.^2/2))
+plot(t,-unwrap(angle(chirp)),'k')
