@@ -55,7 +55,7 @@ int main(int argc, char **argv)
  int brcfile;
  int result;
  int numline=0;
- int file_swath_number=0; // for new file creation
+ int file_swath_number=0,file_nq=0; // for new file creation
  char filename[255];
 #ifdef dump_payload
  int fo;
@@ -143,20 +143,17 @@ int main(int argc, char **argv)
   printf(" Typ=%hhx(0)",Typ); 
   Swath=(*(u_int8_t*)(tablo+58));          // p.54: swath number
   printf(" Swath=%hhx",Swath);
-
- if (Swath!=file_swath_number)
+                                           // p.54 RADAR Sample Count (2 bytes)
+  NQ=*(u_int16_t*)(tablo+59);NQ=ntohs(NQ); // number of quads NQ => Nsamples=2xNQ 
+  if ((Swath!=file_swath_number)||(file_nq!=NQ))
    {if (file_swath_number!=0)
        {close(result);close(brcfile);printf("\nFILE written %d %d\n",2*NQ,numline);numline=0;}
     file_swath_number=Swath;
-    NQ=*(u_int16_t*)(tablo+59);NQ=ntohs(NQ); // number of quads NQ => Nsamples=2xNQ
+    file_nq=NQ;
     sprintf(filename,"resultSW%02d_T%d_NQ%d.bin",Swath,Time,NQ);
     result=open(filename,O_WRONLY|O_CREAT|O_TRUNC,0644); // TRUNC = remove old data
     sprintf(filename,"brcSW%02d_T%d.bin",Swath,Time);
     brcfile=open(filename,O_WRONLY|O_CREAT|O_TRUNC,0644);
-   }
-  else 
-   {// p.54 RADAR Sample Count               (2 bytes)
-    NQ=*(u_int16_t*)(tablo+59);NQ=ntohs(NQ); // number of quads NQ => Nsamples=2xNQ
    }
   printf(" NQ=%d\n",NQ);
   // if (NQ==0) fprintf(result,"%d\n",2*NQ);
