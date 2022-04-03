@@ -34,10 +34,16 @@ else
                  TXPRRcode=1229;    % upchirp
                  TXPSFcode=-9210;   % start
                  TXPLcode=1918;
+              else if (IW==02) % Stripmap
+                   fs=5/16*4*fref     
+                   TXPRRcode=2002;    % upchirp
+                   TXPSFcode=-12970;   % start
+                   TXPLcode=1658;
                else printf("Wrong swath number");
             end
         end
     end
+   end
   end
   
 % range compression 
