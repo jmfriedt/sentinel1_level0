@@ -23,6 +23,8 @@ of lines to be processed (azimuth direction). The number of samples in the range
 when decoding. Please help find an easier way to process the generated dataset, especially in the case of multiple
 swaths to be assembled (IW datasets).
 
+**Please notice that the ``read_bin.m`` script completes with a ``return`` statement at line 67, not displaying any figure, since for the general case the pulse shape must be provided (either identified from a point-like source or computed, see https://github.com/jmfriedt/sentinel1_level0/issues/3 for some hints in that direction). In case you are testing with the Sao Paulo dataset and would like to display the range-azimuth compressed maps, please comment this ``return`` statement line.**
+
 <h1>Current status and understanding on decoding</h1>
 
 *Thanks to the sharp analysis of Nicolas Desiderio Gonzalez Alonso De Linaje at the 
