@@ -7,7 +7,7 @@ at the European GNU Radio Days 2021 available at http://jmfriedt.free.fr/gnuradi
 
 This software might possibly be used as a prequel to https://multiply-sar-pre-processing.readthedocs.io/en/master/
 
-This software inspired a Python version of the decoder found at https://github.com/Rich-Hall/sentinel1decoder with an amazing demonstration of full range-azimuth compression of the level-0 Sentinel1 data at https://nbviewer.org/github/Rich-Hall/sentinel1Level0DecodingDemo/blob/main/sentinel1Level0DecodingDemo.ipynb
+This C software inspired a Python version of the decoder found at https://github.com/Rich-Hall/sentinel1decoder with an amazing demonstration of full range-azimuth compression of the level-0 Sentinel1 data at https://nbviewer.org/github/Rich-Hall/sentinel1Level0DecodingDemo/blob/main/sentinel1Level0DecodingDemo.ipynb
 
 <h1>Compilation</h1>
   
