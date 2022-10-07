@@ -97,11 +97,11 @@ with more structures. Again, some spatial consistency is observed:
 Assuming the raw data we collected has been correctly decoded, we wish to consider the 
 chirp shape to synthesize a local copy and cross-correlate each time-series for range
 compression. The sampling rate (code 0x0b in register 40) is fdec=16/11.fref with
-fref=37.53472224 MHz or 54.596 MS/s, the pulse ramp rate is TXPRR=0x8488 or an Up-Chirp at a 
-rate of 1160xfref^2/2^21=779.3 kHz/us starting at TXPSF=0x2932=10546xfref/2^14=24.16 MHz added
-to TXPRR/(4fref)=5190.5 MHz ... which is out of the C-band RADAR of Sentinel1. Not sure what
-to conclude from this frequency value, other than continuing processing under the assumption
-that the analysis is so far correct.
+fref=37.53472224 MHz or 54.596 MS/s, the pulse ramp rate is TXPRR(code)=0x8488 or an Up-Chirp at a 
+rate of ``1160xfref^2/2^21=779.3 kHz/us`` starting at TXPSF(code)=0x2932 converted to 
+``TXPSF=[TXPRR(code)/2^23+TSPSF(code)/2^14]*fref=(1160/2^23-10531/2^14)*37.53472224=-24 MHz``
+I assume this is the baseband frequency of the chirp with respect to the 5405 MHz carrier frequency
+after its removal during acquisition.
 
 <h1>Pulse compression</h1>
 
