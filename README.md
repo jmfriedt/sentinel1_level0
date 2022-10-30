@@ -245,13 +245,18 @@ generated using the <a href="./2103_europe_results/go.m">script</a> assuming all
 datasets have been fetched from the ESA Copernicus web site (29 GB) and processed
 using the software described above (150 GB).
 
+As a sequel to their original work on EMI detection from space, the same authors published 
+<a href="https://www.sciencedirect.com/science/article/abs/pii/S0034425721005861">Passive sensing by Sentinel-1 SAR: Methods and applications (Remote Sensing of Environment, March 2022)</a> which should be reproducible with this software.
+
 <h1>TODO</h1>
 
 After processing 18 raw datasets of a Sentinel1 flight over western europe, taking forever to 
 generate outputs, it seems clear that a multithreaded approach would increase speed as seen on SNAP
 (with the caveat of keeping CPU usage and memory requirement reasonable, which is NOT the case of SNAP !).
-Since each chuck of data is processed independently of neighbours, this parallelization seems quite
+Since each chunck of data is processed independently of neighbours, this parallelization seems quite
 obvious to implement.
+
+Edit (2022/10/30): not so obvious since each burst within each swatch does not align with CCSDS packets so that multiple threads mighe be decoding parts of the same burst and must make sure to order properly their output when writing to file.
 
 <h1>Acknowledgement</h1>
 
