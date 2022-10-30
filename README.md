@@ -256,7 +256,7 @@ generate outputs, it seems clear that a multithreaded approach would increase sp
 Since each chunck of data is processed independently of neighbours, this parallelization seems quite
 obvious to implement.
 
-Edit (2022/10/30): not so obvious since each burst within each swatch does not align with CCSDS packets so that multiple threads mighe be decoding parts of the same burst and must make sure to order properly their output when writing to file.
+<B>Edit</B> (2022/10/30): not so obvious since each burst within each swath does not align with CCSDS packets so that multiple threads mighe be decoding parts of the same burst and must make sure to order properly their output when writing to file.
 
 <h1>Acknowledgement</h1>
 
