@@ -4,7 +4,6 @@ updated once every second
 When decoding a raw data file, the WordIndex and WordValue are displayed on the
 console and can be extracted:
 ```
-bash
 read_file S1B_IW_RAW__0SDV_20210216T083028_20210216T083100_025629_030DEF_1684.SAFE/s1b-iw-raw-s-vv-20210216t083028-20210216t083100-025629-030def.dat > t
 cat t | grep Word |  cut -d= -f2,3 | cut -c 1-3,12-16 > pvt
 ```
