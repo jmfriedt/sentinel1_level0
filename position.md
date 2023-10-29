@@ -13,7 +13,7 @@ cat t | grep Word |  cut -d= -f2,3 | cut -c 1-3,12-16 > pvt
 ```
 
 for processing with GNU/Octave or Matlab (assuming the file ``pvt`` holds the index value and associated
-word, check the file content if Octave fails to read the file content):
+word, check the file organization if Octave fails to read the file content):
 ```
 f=fopen("pvt");
 d=fscanf(f,"%x");
