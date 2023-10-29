@@ -7,6 +7,8 @@ at the European GNU Radio Days 2021 available at http://jmfriedt.free.fr/gnuradi
 
 This software might possibly be used as a prequel to https://multiply-sar-pre-processing.readthedocs.io/en/master/
 
+This C software inspired a Python version of the decoder found at https://github.com/Rich-Hall/sentinel1decoder with an amazing demonstration of full range-azimuth compression of the level-0 Sentinel1 data at https://nbviewer.org/github/Rich-Hall/sentinel1Level0DecodingDemo/blob/main/sentinel1Level0DecodingDemo.ipynb including the ability to decode ephemeris and metadata in the header which are not handled here, and the ability to select which packet is decoded.
+
 <h1>Compilation</h1>
   
 Working on a GNU/Linux computer (Debian/sid but only using basic functionalities so any distribution
@@ -22,6 +24,8 @@ will take as options the filename, NQ the number of data to be processed (range 
 of lines to be processed (azimuth direction). The number of samples in the range direction is twice the NQ field
 when decoding. Please help find an easier way to process the generated dataset, especially in the case of multiple
 swaths to be assembled (IW datasets).
+
+**Please notice that the ``read_bin.m`` script completes with a ``return`` statement at line 67, not displaying any figure, since for the general case the pulse shape must be provided (either identified from a point-like source or computed, see https://github.com/jmfriedt/sentinel1_level0/issues/3 for some hints in that direction). In case you are testing with the Sao Paulo dataset and would like to display the range-azimuth compressed maps, please comment this ``return`` statement line.**
 
 <h1>Current status and understanding on decoding</h1>
 
@@ -93,11 +97,11 @@ with more structures. Again, some spatial consistency is observed:
 Assuming the raw data we collected has been correctly decoded, we wish to consider the 
 chirp shape to synthesize a local copy and cross-correlate each time-series for range
 compression. The sampling rate (code 0x0b in register 40) is fdec=16/11.fref with
-fref=37.53472224 MHz or 54.596 MS/s, the pulse ramp rate is TXPRR=0x8488 or an Up-Chirp at a 
-rate of 1160xfref^2/2^21=779.3 kHz/us starting at TXPSF=0x2932=10546xfref/2^14=24.16 MHz added
-to TXPRR/(4fref)=5190.5 MHz ... which is out of the C-band RADAR of Sentinel1. Not sure what
-to conclude from this frequency value, other than continuing processing under the assumption
-that the analysis is so far correct.
+fref=37.53472224 MHz or 54.596 MS/s, the pulse ramp rate is TXPRR(code)=0x8488 or an Up-Chirp at a 
+rate of ``1160xfref^2/2^21=779.3 kHz/us`` starting at TXPSF(code)=0x2932 converted to 
+``TXPSF=[TXPRR(code)/2^23+TSPSF(code)/2^14]*fref=(1160/2^23-10531/2^14)*37.53472224=-24 MHz``
+I assume this is the baseband frequency of the chirp with respect to the 5405 MHz carrier frequency
+after its removal during acquisition.
 
 <h1>Pulse compression</h1>
 
@@ -241,13 +245,18 @@ generated using the <a href="./2103_europe_results/go.m">script</a> assuming all
 datasets have been fetched from the ESA Copernicus web site (29 GB) and processed
 using the software described above (150 GB).
 
+As a sequel to their original work on EMI detection from space, the same authors published 
+<a href="https://www.sciencedirect.com/science/article/abs/pii/S0034425721005861">Passive sensing by Sentinel-1 SAR: Methods and applications (Remote Sensing of Environment, March 2022)</a> which should be reproducible with this software.
+
 <h1>TODO</h1>
 
 After processing 18 raw datasets of a Sentinel1 flight over western europe, taking forever to 
 generate outputs, it seems clear that a multithreaded approach would increase speed as seen on SNAP
 (with the caveat of keeping CPU usage and memory requirement reasonable, which is NOT the case of SNAP !).
-Since each chuck of data is processed independently of neighbours, this parallelization seems quite
+Since each chunck of data is processed independently of neighbours, this parallelization seems quite
 obvious to implement.
+
+<B>Edit</B> (2022/10/30): not so obvious since each burst within each swath does not align with CCSDS packets so that multiple threads mighe be decoding parts of the same burst and must make sure to order properly their output when writing to file.
 
 <h1>Acknowledgement</h1>
 
