@@ -111,9 +111,9 @@ int main(int argc, char **argv)
 
   // Sub-commutation ancillary data: PVT/attitude will be accumulated as 42 words along headers
   // p.27: Counter+value                    (3 bytes)
-  printf("\tWordIndex=%hhx",*(u_int8_t*)(tablo+20)); // Word index will increment from 1 to 0x40 to fill
+  printf("\tWordIndex=%02hhx",*(u_int8_t*)(tablo+20)); // Word index will increment from 1 to 0x40 to fill
   tmp16=*(u_int16_t*)(tablo+21);tmp16=ntohs(tmp16);  // the array described in p.23 with ... vvv
-  printf("\tWordVal=%hx",tmp16);                   // Word value
+  printf("\tWordVal=%04hx",tmp16);                   // Word value
 
   // Counter Service                       (8 bytes)
   tmp32=*(u_int32_t*)(tablo+23);tmp32=ntohl(tmp32);
