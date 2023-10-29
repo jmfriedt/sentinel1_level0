@@ -9,6 +9,10 @@ This software might possibly be used as a prequel to https://multiply-sar-pre-pr
 
 This C software inspired a Python version of the decoder found at https://github.com/Rich-Hall/sentinel1decoder with an amazing demonstration of full range-azimuth compression of the level-0 Sentinel1 data at https://nbviewer.org/github/Rich-Hall/sentinel1Level0DecodingDemo/blob/main/sentinel1Level0DecodingDemo.ipynb including the ability to decode ephemeris and metadata in the header which are not handled here, and the ability to select which packet is decoded.
 
+See nevertheless <a href="position.md">position.md</a> for a description on how to analyze the console output
+to extract position and velocity of the satellite (the other parameters on the satellite attitude could be
+extracted the same way but I do not know how to assess the relevance of the attitude quaternions).
+
 <h1>Compilation</h1>
   
 Working on a GNU/Linux computer (Debian/sid but only using basic functionalities so any distribution
