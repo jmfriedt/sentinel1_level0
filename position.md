@@ -1,14 +1,19 @@
-See Sentinel-1-SAR-Space-Packet-Protocol-Data-Unit.pdf page 23: the position is
-updated once every second
+# Analyzing the packet decoder output to extract the satellite position and velocity
+
+See <a href="doc/Sentinel-1-SAR-Space-Packet-Protocol-Data-Unit.pdf">Sentinel-1-SAR-Space-Packet-Protocol-Data-Unit.pdf</a>
+page 23: the position and velocity are updated once every second, and the information is spread over multiple
+successive frames so the analysis is most easily performed as a post-processing step rather than in the
+``read_file.c`` program itself.
 
 When decoding a raw data file, the WordIndex and WordValue are displayed on the
-console and can be extracted:
+console and can be extracted if the output of the decoder is saved in a file:
 ```
 read_file S1B_IW_RAW__0SDV_20210216T083028_20210216T083100_025629_030DEF_1684.SAFE/s1b-iw-raw-s-vv-20210216t083028-20210216t083100-025629-030def.dat > t
 cat t | grep Word |  cut -d= -f2,3 | cut -c 1-3,12-16 > pvt
 ```
 
-for processing with GNU/Octave or Matlab:
+for processing with GNU/Octave or Matlab (assuming the file ``pvt`` holds the index value and associated
+word, check the file content if Octave fails to read the file content):
 ```
 f=fopen("pvt");
 d=fscanf(f,"%x");
@@ -36,6 +41,9 @@ for m=1:3
 end
 ```
 
+The Octave program generate six variables with the satellite postion in ECEF corrdinates
+in X, Y and Z and the satellite velocity components vX, vY and vZ in m/s.
+
 As an example on the Sao Paulo dataset named S1B_IW_RAW__0SDV_20210216T083028_20210216T083100_025629_030DEF_1684,
 the coordinate extraction leads to ECEF
 ```
@@ -52,7 +60,7 @@ Latitude  : 24.18979   deg S
 Longitude : 41.18779   deg W
 Height    : 705180.7   m
 ```
-which is not inconsistent with Sao Paulo location at -23.5558 -46.6396 and a satellite altitude of 700 km.
+which is not inconsistent with Sao Paulo location at 23.5558 S, 46.6396 W and a satellite altitude of 700 km.
 
 Similarly, the velocity magnitude
 ```
@@ -61,4 +69,3 @@ sqrt(v*v') = 7589.7
 ```
 is not inconsistent with a coarse estimate of a satellite flying an orbit length of 40000+2*pi*700=44400 km in 100 minutes or
 7400 m/s.
-

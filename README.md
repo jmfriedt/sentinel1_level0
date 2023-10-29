@@ -143,10 +143,10 @@ compression:
 
 <img src="figures/compression.png">
 
-<h1>Point-like target: the Sao Paolo dataset</h1>
+<h1>Point-like target: the Sao Paulo dataset</h1>
 
 Consensus seems to be that range/azimuth compression is best assessed on point like targets
-over flat surfaces, namely ships at sea. The dataset we consider is the port of Sao Paolo
+over flat surfaces, namely ships at sea. The dataset we consider is the port of Sao Paulo
 in Brazil with the files found at S1B_IW_RAW__0SDV_20210216T083028_20210216T083100_025629_030DEF_1684.zip (raw level 0 data) and 
 S1B_IW_SLC__1SDV_20210216T083030_20210216T083058_025629_030DEF_68C4.zip
 (level 1 data).
@@ -179,10 +179,10 @@ My current understanding is that this phase should be linear and something shoul
 remove this parabolic dependency of the phase with position before the FFT can compress
 the signal along the azimuth.
 
-<h1>Point-like target: the Sao Paolo StripMap (SM) dataset</h1>
+<h1>Point-like target: the Sao Paulo StripMap (SM) dataset</h1>
 
 In order to avoid the Doppler shift introduced by sweeping the RADAR beam along the swath
-in EW or IW mode, we consider a simpler StripMap (SM) acquisition over the harbour of Sao Paolo.
+in EW or IW mode, we consider a simpler StripMap (SM) acquisition over the harbour of Sao Paulo.
 Again the decoded CCSDS sentences are consistent with swath 6 being acquired (as stated
 in the name of the dataset we fetched from Copernicus Scihub ``S1A_S6_RAW__0SDV_20210226T214354_20210226T214424_036766_045287_FD68.SAFE``)
 
@@ -214,7 +214,7 @@ reflectors:
 
 Processing the huge datasets in a single step is beyond the capability of the author's CF-19 laptop computer fitted with
 12 GB RAM. The software was updated to save multiple binary files indexed with the Swath number and acquisition (GPS) time 
-(in second). The result, with comparison with the SNAP software output of a StripMap (SM6) dataset of Sao Paolo harbour,
+(in second). The result, with comparison with the SNAP software output of a StripMap (SM6) dataset of Sao Paulo harbour,
 is exhibited below
 
 <img src="figures/saopaolo_SM_level0.png">
