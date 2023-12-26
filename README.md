@@ -18,7 +18,7 @@ See nevertheless <a href="position.md">position.md</a> for a description on how 
 to extract position and velocity of the satellite (the other parameters on the satellite attitude could be
 extracted the same way but I do not know how to assess the relevance of the attitude quaternions).
 
-## Compilation
+## Compilation
   
 Working on a GNU/Linux computer (Debian/sid but only using basic functionalities so any distribution
 should do), type ``make`` to compile (tested using gcc 10.2.1). Execute by providing to ``read_file`` 
