@@ -6,6 +6,10 @@ from Sentinel-1 Data" at https://www.mdpi.com/2072-4292/9/11/1183 and summarized
 at the European GNU Radio Days 2021 available at http://jmfriedt.free.fr/gnuradiodays_setinel1_level0.mp4 
 with the slides at http://jmfriedt.free.fr/slides_sentinel_raw.pdf.
 
+I am proud to learn that <a href="https://ieeexplore.ieee.org/document/10183833/">Finding Ground-Based 
+Radars in SAR Images: Localizing Radio Frequency Interference Using Unsupervised Deep Learning</a> has used
+this software for their work (see their [37]).
+
 This software might possibly be used as a prequel to https://multiply-sar-pre-processing.readthedocs.io/en/master/
 
 This C software inspired a Python version of the decoder found at https://github.com/Rich-Hall/sentinel1decoder with an amazing demonstration of full range-azimuth compression of the level-0 Sentinel1 data at https://nbviewer.org/github/Rich-Hall/sentinel1Level0DecodingDemo/blob/main/sentinel1Level0DecodingDemo.ipynb including the ability to decode ephemeris and metadata in the header which are not handled here, and the ability to select which packet is decoded.
