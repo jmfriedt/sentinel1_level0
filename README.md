@@ -3,7 +3,8 @@
 Analysis of Sentinel1 level 0 data for decoding raw data, inspired by
 the results shown in "Identification of C-Band Radio Frequency Interferences 
 from Sentinel-1 Data" at https://www.mdpi.com/2072-4292/9/11/1183 and summarized in a presentation
-at the European GNU Radio Days 2021 available at http://jmfriedt.free.fr/gnuradiodays_setinel1_level0.mp4 with the slides at http://jmfriedt.free.fr/slides_sentinel_raw.pdf.
+at the European GNU Radio Days 2021 available at http://jmfriedt.free.fr/gnuradiodays_setinel1_level0.mp4 
+with the slides at http://jmfriedt.free.fr/slides_sentinel_raw.pdf.
 
 This software might possibly be used as a prequel to https://multiply-sar-pre-processing.readthedocs.io/en/master/
 
@@ -13,7 +14,7 @@ See nevertheless <a href="position.md">position.md</a> for a description on how 
 to extract position and velocity of the satellite (the other parameters on the satellite attitude could be
 extracted the same way but I do not know how to assess the relevance of the attitude quaternions).
 
-<h1>Compilation</h1>
+## Compilation
   
 Working on a GNU/Linux computer (Debian/sid but only using basic functionalities so any distribution
 should do), type ``make`` to compile (tested using gcc 10.2.1). Execute by providing to ``read_file`` 
@@ -31,7 +32,16 @@ swaths to be assembled (IW datasets).
 
 **Please notice that the ``read_bin.m`` script completes with a ``return`` statement at line 67, not displaying any figure, since for the general case the pulse shape must be provided (either identified from a point-like source or computed, see https://github.com/jmfriedt/sentinel1_level0/issues/3 for some hints in that direction). In case you are testing with the Sao Paulo dataset and would like to display the range-azimuth compressed maps, please comment this ``return`` statement line.**
 
-<h1>Current status and understanding on decoding</h1>
+## Getting data
+
+ESA used to share their Sentinel data through the https://scihub.copernicus.eu/dhus but this web
+site no longer exists (Dec. 2023) and has now shifted to https://dataspace/copernicus.eu/browser. 
+Fortunately the raw datasets are still available.
+
+<img src="scrot_2023-12-24_11-19.png" width=300>
+<img src="scrot_2023-12-24_11-25.png" width=300>
+
+## Current status and understanding on decoding
 
 *Thanks to the sharp analysis of Nicolas Desiderio Gonzalez Alonso De Linaje at the 
 Technical University of Denmark, the software has now been compared with the reference
