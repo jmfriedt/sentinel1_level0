@@ -25,9 +25,14 @@ cat result.dat  | sed 's/[0-9]//g' | sed 's/-//g' | sed 's/\.//g' | sed 's/(//g'
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <math.h>
+
+#if defined(MSC_VER) 
+#include <winsock2.h>
+#else
 #include <arpa/inet.h> // ntohl for proper endianness
+#include <unistd.h>
+#endif
 
 #include "packet_decode.h"
 #include "bypass.h"
@@ -36,13 +41,15 @@ cat result.dat  | sed 's/[0-9]//g' | sed 's/-//g' | sed 's/\.//g' | sed 's/(//g'
 #define fref 37.53472224
 
 int main(int argc, char **argv)
-{int f,res; // ,k 
+{int res; // ,f
+ FILE *f;
 // unsigned short *suser;
- u_int16_t c,tmp16,NQ=0;
- u_int32_t tmp32,Time;
+ uint16_t c,tmp16,NQ=0;
+ uint32_t tmp32,Time;
  int Secondary;
  int Count,DataLen,PID,PCAT,Sequence;
- unsigned char tablo[65536],BAQ,Swath,Typ;
+ static unsigned char tablo[65536];
+ unsigned char BAQ,Swath,Typ;
  int cal_p,cposition,brcpos;
  unsigned char *user;
  float IE[52378]; // results
@@ -61,14 +68,14 @@ int main(int argc, char **argv)
  int fo;
 #endif
  if (argc<2) return(1);
- f=open(argv[1],O_RDONLY);
+ f=fopen(argv[1],"r"); // f=open(argv[1],O_RDONLY);
  // result=fopen("result.dat","w");
  // brcfile=fopen("brc.dat","w");
  // fprintf(result,"# Created by myself\n# name: x\n# type: complex matrix\n# rows: \n# columns: ");
  do
  {
   // Begin SAR Space Protocol Data Unit p.14/85
-  read(f,&c,2);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
+  fread(&c,2,1,f);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
   c=ntohs(c);
   // On the i386 the host byte order is Least Significant Byte first, whereas the network byte
   // order, as used on the Internet, is Most Significant Byte first
@@ -77,74 +84,74 @@ int main(int argc, char **argv)
   PCAT=(c)&0xf;
   printf("%04x: %d(1)\t%d(65)\t%d(12)\t",c,Secondary,PID,PCAT);
  
-  read(f,&c,2);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
+  fread(&c,2,1,f);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
   c=ntohs(c);
   Sequence=(c>>14);
   Count=(c&0x3f);
   
-  read(f,&c,2);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
+  fread(&c,2,1,f);    // 0x0c = Pack_Ver Pack_Typ Secondary PID PCAT 
   DataLen=ntohs(c)+1;
   printf("%04x: %x(3)\tCount=%02d\tLen=%d(61..65533)\n",c,Sequence,Count,DataLen);
   if (((DataLen+6)%4)!=0) printf("\nERROR: Length not multiple of 4\n");
-  res=read(f,tablo,DataLen);
+  res=fread(tablo,1,DataLen,f);
   // End SAR Space Protocol Data Unit p.14/85 : we have the payload ... now analyze tablo
  
   // The Secondary head will be the next 62 bytes
   // https://www.andrews.edu/~tzs/timeconv/timedisplay.php
   // Time Conversion Results Jan 12, 2021 17:32:01 UTC  =  GPS Time 1294507939
   // coarse and fine time field             (6 bytes)
-  tmp32=*(u_int32_t*)tablo;Time=ntohl(tmp32);
+  tmp32=*(uint32_t*)tablo;Time=ntohl(tmp32);
   printf("\tTime: %d",Time);               // Coarse Time = begin+6 1294507939
-  tmp16=*(u_int16_t*)(tablo+4);tmp16=ntohs(tmp16);
+  tmp16=*(uint16_t*)(tablo+4);tmp16=ntohs(tmp16);
   printf(":%d",tmp16);                     // Fine Time   = begin+10, *2^(-16) s
   // Fixed ancillary data service           (14 bytes)
-  tmp32=*(u_int32_t*)(tablo+6);tmp32=ntohl(tmp32);
+  tmp32=*(uint32_t*)(tablo+6);tmp32=ntohl(tmp32);
   printf("\t%08x(352EF853)",tmp32);        // Sync Marker = begin+12, 352EF853
   if (tmp32!=0x352EF853) printf("\nERROR: Sync marker != 352EF853");
-  tmp32=*(u_int32_t*)(tablo+10);tmp32=ntohl(tmp32);
+  tmp32=*(uint32_t*)(tablo+10);tmp32=ntohl(tmp32);
   //printf(" %08x",tmp32);                 // Data Take ID= begin+16 (TBD)
-  //printf("\t%hhx",*(u_int8_t*)tablo+14); // ECC Number  = begin+20  ?! /!\ ?!
-  //printf("\t%hhx",*(u_int8_t*)tablo+15); // TestMode/RXID=begin+21
-  tmp32=*(u_int32_t*)(tablo+16);tmp32=ntohl(tmp32);
+  //printf("\t%hhx",*(uint8_t*)tablo+14); // ECC Number  = begin+20  ?! /!\ ?!
+  //printf("\t%hhx",*(uint8_t*)tablo+15); // TestMode/RXID=begin+21
+  tmp32=*(uint32_t*)(tablo+16);tmp32=ntohl(tmp32);
   //printf("\t%08x",tmp32);                  // Config ID   = begin+22 (TBD)
   // page 22
 
   // Sub-commutation ancillary data: PVT/attitude will be accumulated as 42 words along headers
   // p.27: Counter+value                    (3 bytes)
-  printf("\tWordIndex=%02hhx",*(u_int8_t*)(tablo+20)); // Word index will increment from 1 to 0x40 to fill
-  tmp16=*(u_int16_t*)(tablo+21);tmp16=ntohs(tmp16);  // the array described in p.23 with ... vvv
+  printf("\tWordIndex=%02hhx",*(uint8_t*)(tablo+20)); // Word index will increment from 1 to 0x40 to fill
+  tmp16=*(uint16_t*)(tablo+21);tmp16=ntohs(tmp16);  // the array described in p.23 with ... vvv
   printf("\tWordVal=%04hx",tmp16);                   // Word value
 
   // Counter Service                       (8 bytes)
-  tmp32=*(u_int32_t*)(tablo+23);tmp32=ntohl(tmp32);
+  tmp32=*(uint32_t*)(tablo+23);tmp32=ntohl(tmp32);
   printf("\t%08x",tmp32);                  // Space packet count (4 bytes)
-  tmp32=*(u_int32_t*)(tablo+27);tmp32=ntohl(tmp32);
+  tmp32=*(uint32_t*)(tablo+27);tmp32=ntohl(tmp32);
   printf(" %08x",tmp32);                   // PRI count (4 bytes)
-  BAQ=(*(u_int8_t*)(tablo+31))&0x1f;       // BAQ mode 0x0c=FDBAQ mode0 nominal p.33: 
-  printf(" BAQ=%02x(c)", (*(u_int8_t*)(tablo+31))); 
+  BAQ=(*(uint8_t*)(tablo+31))&0x1f;       // BAQ mode 0x0c=FDBAQ mode0 nominal p.33: 
+  printf(" BAQ=%02x(c)", (*(uint8_t*)(tablo+31))); 
   // p.32: RADAR Configuration Support     (28 bytes) -> total=31+28=59
-  printf(" BlockLen=%hhx(1F)\n",(*(u_int8_t*)(tablo+32))); 
+  printf(" BlockLen=%hhx(1F)\n",(*(uint8_t*)(tablo+32))); 
  
-  printf("\tDecim=%hhx",*(u_int8_t*)(tablo+34));     // RGDEC
-  tmp16=*(u_int16_t*)(tablo+36);tmp16=ntohs(tmp16);  // Tx Pulse Ramp Rate
+  printf("\tDecim=%hhx",*(uint8_t*)(tablo+34));     // RGDEC
+  tmp16=*(uint16_t*)(tablo+36);tmp16=ntohs(tmp16);  // Tx Pulse Ramp Rate
   if ((tmp16&0x8000)==0) printf("\tTXPRR=v%x=",tmp16);else printf("\tTXPRR=^%x=",tmp16);
   printf("%d",tmp16&0x7fff); 
-  tmp16=*(u_int16_t*)(tablo+38);tmp16=ntohs(tmp16);  // Tx Pulse Start Freq
+  tmp16=*(uint16_t*)(tablo+38);tmp16=ntohs(tmp16);  // Tx Pulse Start Freq
   if ((tmp16&0x8000)==0) printf("\tTXPSF=-0x%x",tmp16);else printf("\tTXPSF=+0x%x",tmp16); // 0 negative, 1 positive ?!
   printf("=%d ",tmp16&0x7fff);             // Word value
-  tmp32=*(u_int32_t*)(tablo+40);tmp32=ntohl(tmp32)>>8; // keep last 24 bits
+  tmp32=*(uint32_t*)(tablo+40);tmp32=ntohl(tmp32)>>8; // keep last 24 bits
   printf("TXPL=%08x=%d ",tmp32,tmp32);     // TX Pulse length (3 bytes)
-  tmp32=*(u_int32_t*)(tablo+44);tmp32=ntohl(tmp32)>>8; // keep last 24 bits
+  tmp32=*(uint32_t*)(tablo+44);tmp32=ntohl(tmp32)>>8; // keep last 24 bits
   printf("PRI=%08x=%d",tmp32,tmp32);       // PRI, needed for Doppler centroid analysis (3 bytes)
   
-  cal_p=((*(u_int8_t*)(tablo+53))>>4)&0x07;
+  cal_p=((*(uint8_t*)(tablo+53))>>4)&0x07;
   printf(" Polar=%x", cal_p);              // SSB Data calibration (p.47) 
-  Typ=(*(u_int8_t*)(tablo+57));Typ=Typ>>4; // p.52: signal type
+  Typ=(*(uint8_t*)(tablo+57));Typ=Typ>>4; // p.52: signal type
   printf(" Typ=%hhx(0)",Typ); 
-  Swath=(*(u_int8_t*)(tablo+58));          // p.54: swath number
+  Swath=(*(uint8_t*)(tablo+58));          // p.54: swath number
   printf(" Swath=%hhx",Swath);
                                            // p.54 RADAR Sample Count (2 bytes)
-  NQ=*(u_int16_t*)(tablo+59);NQ=ntohs(NQ); // number of quads NQ => Nsamples=2xNQ 
+  NQ=*(uint16_t*)(tablo+59);NQ=ntohs(NQ); // number of quads NQ => Nsamples=2xNQ 
   if ((Swath!=file_swath_number)||(file_nq!=NQ))
    {if (file_swath_number!=0)
        {close(result);close(brcfile);printf("\nFILE written %d %d\n",2*NQ,numline);numline=0;}
@@ -160,7 +167,7 @@ int main(int argc, char **argv)
   // tablo+61 = n/a (p.54: index 67)
 
   // p.56 User Data Field -- DataLen-62 ; 4 sections with IE, IO, QE, QO (NOT interleaved)
-  user=(u_int8_t*)(tablo+62);  // User Data Field starts @ end of Secondary Header
+  user=(uint8_t*)(tablo+62);  // User Data Field starts @ end of Secondary Header
   // p.58: format D is nominally used to output radar echo data = Decimation + FDBAQ
   // NO BYTESWAP SINCE WE WORK BIT BY BIT: Keep bytes in read() order
 #ifdef dump_payload
@@ -199,7 +206,7 @@ int main(int argc, char **argv)
      }
   numline++;
  } while ((res>0)); // until EOF
- close(f);
+ fclose(f);
  close(brcfile);
  close(result);
  printf("That's all folks, the end: %dx%d samples written\n",2*NQ,numline);

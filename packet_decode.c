@@ -144,10 +144,10 @@ unsigned char get_THIDX(unsigned char *p,int *cposition,int *bposition)
 int packet_decode(unsigned char *p,int NQ,float *IE, float *IO, float *QE, float *QO,char *brc,int *brcpos) // FDBAQ: section 4.4 p.67
 {// IE 1st 3 bits = BRC
  // QE first 8 bits = THIDX
- struct sh_code hcodeIE[52378];
- struct sh_code hcodeIO[52378];
- struct sh_code hcodeQE[52378];
- struct sh_code hcodeQO[52378];
+ static struct sh_code hcodeIE[52378];
+ static struct sh_code hcodeIO[52378];
+ static struct sh_code hcodeQE[52378];
+ static struct sh_code hcodeQO[52378];
  unsigned char BRCn[410];   // max value p.55: 52378/128=409.2
  unsigned char THIDXn[410];
  int BRCindex;
