@@ -39,7 +39,7 @@ swaths to be assembled (IW datasets).
 ## Getting data
 
 ESA used to share their Sentinel data through the https://scihub.copernicus.eu/dhus but this web
-site no longer exists (Dec. 2023) and has now shifted to https://dataspace/copernicus.eu/browser. 
+site no longer exists (Dec. 2023) and has now shifted to https://dataspace.copernicus.eu/browser. 
 Fortunately the raw datasets are still available.
 
 <img src="scrot_2023-12-24_11-19.png" width=300>
